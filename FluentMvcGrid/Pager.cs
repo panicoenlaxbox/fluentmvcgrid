@@ -1,0 +1,205 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Web;
+using System.Web.Mvc;
+
+namespace FluentMvcGrid
+{
+    internal static class Pager
+    {
+        public static string First = "First";
+        public static string Next = "Next";
+        public static string Previous = "Previous";
+        public static string Last = "Last";
+        public static string PaginationInfo = "Page {0} of {1}, {2} records";
+
+        public static HtmlString GetDefaultPagination(int pageIndex, int totalCount, int pageSize, PaginationSizing paginationSizing, int numericLinksCount, bool paginationInfo, object htmlAttributes)
+        {
+            var pageCount = (int)Math.Ceiling((double)totalCount / pageSize);
+            if (pageCount == 1)
+            {
+                return new HtmlString("");
+            }
+
+            var ul = new TagBuilder("ul");
+            ul.AddCssClass("pagination");
+
+            var attributes = (IDictionary<string, object>)HtmlHelper.AnonymousObjectToHtmlAttributes(htmlAttributes);
+            if (attributes != null)
+            {
+                if (attributes.ContainsKey("class"))
+                {
+                    ul.AddCssClass(attributes["class"].ToString());
+                }
+                ul.MergeAttributes(attributes);
+            }
+
+            switch (paginationSizing)
+            {
+                case PaginationSizing.Large:
+                    ul.AddCssClass("pagination-lg");
+                    break;
+                case PaginationSizing.Small:
+                    ul.AddCssClass("pagination-sm");
+                    break;
+            }
+
+            var liClass = pageIndex == 1 ? "disabled" : "";
+
+            var parameters = HttpUtility.ParseQueryString(HttpContext.Current.Request.Url.Query);
+
+            if (string.IsNullOrWhiteSpace(parameters["page"]))
+            {
+                parameters.Add("page", "");
+            }
+            parameters["page"] = "1";
+            var path = HttpContext.Current.Request.Path;
+            var url = path + "?" + parameters;
+            ul.InnerHtml += GetPaginationItem("&laquo;", url, liClass, First, null);
+
+            var num = pageCount - 1;
+            var num1 = pageIndex + numericLinksCount / 2;
+            var num2 = num1 - numericLinksCount + 1;
+            if (num1 > num)
+            {
+                num2 = num2 - (num1 - num);
+                num1 = num;
+            }
+            if (num2 < 0)
+            {
+                num1 = Math.Min(num1 + -num2, num);
+                num2 = 0;
+            }
+            for (var i = num2; i <= num1; i++)
+            {
+                var j = i + 1;
+                var text = j.ToString(CultureInfo.InvariantCulture);
+                liClass = pageIndex == j ? "active" : "";
+                if (j != pageIndex)
+                {
+                    parameters["page"] = j.ToString(CultureInfo.InvariantCulture);
+                    url = path + "?" + parameters;
+                    ul.InnerHtml += GetPaginationItem(text, url, liClass, "", null);
+                }
+                else
+                {
+                    url = "#";
+                    ul.InnerHtml += GetPaginationItem(text, url, liClass, "", null);
+                }
+            }
+
+            liClass = pageIndex == pageCount ? "disabled" : "";
+            parameters["page"] = pageCount.ToString(CultureInfo.InvariantCulture);
+            url = path + "?" + parameters;
+            ul.InnerHtml += GetPaginationItem("&raquo;", url, liClass, Last, null);
+
+            if (paginationInfo)
+            {
+                var info = string.Format(PaginationInfo, pageIndex, pageCount, totalCount);
+                ul.InnerHtml += string.Format("<li class='disabled'><span>{0}</span></li>", info);
+            }
+
+            return new HtmlString(ul.ToString());
+        }
+
+        public static HtmlString GetPagerPagination(int pageIndex, int totalCount, int pageSize, bool alignedLinks, object htmlAttributes)
+        {
+            var pageCount = (int)Math.Ceiling((double)totalCount / pageSize);
+            if (pageCount == 1)
+            {
+                return new HtmlString("");
+            }
+
+            var parameters = HttpUtility.ParseQueryString(HttpContext.Current.Request.Url.Query);
+
+            if (string.IsNullOrWhiteSpace(parameters["page"]))
+            {
+                parameters.Add("page", "");
+            }
+
+            var path = HttpContext.Current.Request.Path;
+
+            //Previous
+            var ul = new TagBuilder("ul");
+            ul.AddCssClass("pager");
+            var attributes = (IDictionary<string, object>)HtmlHelper.AnonymousObjectToHtmlAttributes(htmlAttributes);
+            if (attributes != null)
+            {
+                if (attributes.ContainsKey("class"))
+                {
+                    ul.AddCssClass(attributes["class"].ToString());
+                }
+                ul.MergeAttributes(attributes);
+            }
+            var text = Previous;
+            var liClass = "";
+            if (alignedLinks)
+            {
+                text = "&larr; " + text;
+                liClass += " previous";
+            }
+            string url;
+            if (pageIndex == 1)
+            {
+                url = "#";
+                liClass += " disabled";
+            }
+            else
+            {
+                parameters["page"] = (pageIndex - 1).ToString(CultureInfo.InvariantCulture);
+                url = path + "?" + parameters;
+            }
+            ul.InnerHtml += GetPaginationItem(text, url, liClass.Trim(), "", null);
+
+            //Next
+            parameters["page"] = (pageIndex + 1).ToString(CultureInfo.InvariantCulture);
+            text = Next;
+            liClass = "";
+            if (pageIndex + 1 > pageCount)
+            {
+                url = "#";
+                liClass = "disabled";
+            }
+            else
+            {
+                url = path + "?" + parameters;
+            }
+            if (alignedLinks)
+            {
+                text = text + " &rarr;";
+                liClass += " next";
+            }
+            ul.InnerHtml += GetPaginationItem(text, url, liClass, "", null);
+
+            return new HtmlString(ul.ToString());
+        }
+
+        private static string GetPaginationItem(string text, string url, string liClass, string title, object htmlAttributes)
+        {
+            var a = new TagBuilder("a")
+            {
+                InnerHtml = text
+            };
+            if (!string.IsNullOrWhiteSpace(url))
+            {
+                a.MergeAttribute("href", url);
+            }
+            if (htmlAttributes != null)
+            {
+                a.MergeAttributes(HtmlHelper.AnonymousObjectToHtmlAttributes(htmlAttributes));
+            }
+            var li = new TagBuilder("li");
+            if (!string.IsNullOrWhiteSpace(liClass))
+            {
+                li.AddCssClass(liClass);
+            }
+            li.InnerHtml += a.ToString();
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                li.MergeAttribute("title", title);
+            }
+            return li.ToString();
+        }
+    }
+}
