@@ -19,10 +19,17 @@ namespace FluentMvcGrid
         private readonly List<Tuple<string, Func<dynamic, object>>> _attributes = new List<Tuple<string, Func<dynamic, object>>>();
         private Func<dynamic, object> _htmlBefore;
         private Func<dynamic, object> _htmlAfter;
+        private BootstrapVersion _bootstrapVersion = BootstrapVersion.Bootstrap3;
 
         public FluentMvcGrid(IEnumerable<T> items)
         {
             _items = items;
+        }
+
+        public FluentMvcGrid<T> Bootstrap(BootstrapVersion version)
+        {
+            _bootstrapVersion = version;
+            return this;
         }
 
         public FluentMvcGrid<T> AddAttribute(string key, Func<dynamic, object> expression)
@@ -132,6 +139,10 @@ namespace FluentMvcGrid
 
             if (_footerColumns.Any())
             {
+                if (_footerColumns.Count == 1)
+                {
+                    _footerColumns.First().ColSpan(_columns.Count);
+                }
                 tr = new TagBuilder("tr");
                 tr.MergeAttribute("data-role", "footer");
                 foreach (var footerColumn in _footerColumns)
@@ -147,7 +158,7 @@ namespace FluentMvcGrid
                 tr.MergeAttribute("data-role", "pagination");
                 var td = new TagBuilder("td");
                 td.MergeAttribute("colspan", _columns.Count.ToString());
-                td.InnerHtml = _pagination.Build();
+                td.InnerHtml = _pagination.Build(_bootstrapVersion);
                 if (!string.IsNullOrWhiteSpace(td.InnerHtml))
                 {
                     tr.InnerHtml = td.ToString();
