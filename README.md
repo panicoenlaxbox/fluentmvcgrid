@@ -191,7 +191,7 @@ Por ahora, este método sólo incide en el HTML generado para la paginación por
 
 # Localización #
 
-Aunque he sopado la idea de incluir un fichero de recursos (resx) para la localización, finalmente he optado por una clase pública estática con campos públicos. De este modo se permite a quién utilice la librería cambiar el valor de estas variables en tiempo de ejecución.
+Aunque he sopesado la idea de incluir un fichero de recursos (resx) para la localización, finalmente he optado por una clase pública estática con campos públicos. De este modo se permite a quién utilice la librería cambiar el valor de estas variables en tiempo de ejecución.
 
     public static class Resources
     {
