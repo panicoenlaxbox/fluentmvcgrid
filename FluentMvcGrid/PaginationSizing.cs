@@ -4,6 +4,7 @@
     {
         Large,
         Normal,
-        Small
+        Small,
+        Mini
     }
 }

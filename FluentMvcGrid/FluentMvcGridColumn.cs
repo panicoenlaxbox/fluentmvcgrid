@@ -12,7 +12,7 @@ namespace FluentMvcGrid
         private Func<T, object> _format;
         private Func<string> _headerClass;
         private string _headerText;
-        private string _sort;
+        private string _sortBy;
         private bool _sortable;
 
         public FluentMvcGridColumn<T> AddAttribute(string key, Func<T, object> expression)
@@ -27,9 +27,9 @@ namespace FluentMvcGrid
             return this;
         }
 
-        public FluentMvcGridColumn<T> SortBy(string sort)
+        public FluentMvcGridColumn<T> SortBy(string sortBy)
         {
-            _sort = sort;
+            _sortBy = sortBy;
             return this;
         }
 
@@ -96,12 +96,12 @@ namespace FluentMvcGrid
                 parameters.Remove("page");
                 var sort = parameters["sort"];
                 var sortDir = "ASC";
-                if (!string.IsNullOrWhiteSpace(sort) && sort == _sort)
+                if (!string.IsNullOrWhiteSpace(sort) && sort == _sortBy)
                 {
                     sortDir = parameters["sortdir"];
                     sortDir = sortDir == "ASC" ? "DESC" : "ASC";
                 }
-                parameters["sort"] = _sort;
+                parameters["sort"] = _sortBy;
                 parameters["sortdir"] = sortDir;
                 var href = HttpContext.Current.Request.Path + "?" + parameters;
                 a.Attributes.Add("href", href);

@@ -64,10 +64,10 @@ namespace FluentMvcGrid
             return this;
         }
 
-        internal string Build()
+        internal string Build(BootstrapVersion bootstrapVersion)
         {
-            return Pager.GetDefaultPagination(_pageIndex, _totalCount, _pageSize, _paginationSizing,
-                    _numericLinksCount, _paginationInfo, _htmlAttributes).ToString();
+            return Pagination.GetDefaultPagination(_pageIndex, _totalCount, _pageSize, _paginationSizing,
+                    _numericLinksCount, _paginationInfo, _htmlAttributes, bootstrapVersion).ToString();
         }
     }
 }
