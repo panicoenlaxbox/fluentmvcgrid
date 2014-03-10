@@ -193,7 +193,7 @@ Por ahora, este método sólo incide en el HTML generado para la paginación por
 
 Aunque he sopesado la idea de incluir un fichero de recursos (resx) para la localización, finalmente he optado por una clase pública estática con campos públicos. De este modo se permite a quién utilice la librería cambiar el valor de estas variables en tiempo de ejecución.
 
-    public static class Resources
+    public static class FluentMvcGridResources
     {
         public static string First = "First";
         public static string Next = "Next";
