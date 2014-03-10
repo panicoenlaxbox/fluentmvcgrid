@@ -1,6 +1,6 @@
 ﻿namespace FluentMvcGrid
 {
-    public static class Resources
+    public static class FluentMvcGridResources
     {
         public static string First = "First";
         public static string Next = "Next";

@@ -68,7 +68,7 @@ namespace FluentMvcGrid
             parameters["page"] = "1";
             var path = HttpContext.Current.Request.Path;
             var url = path + "?" + parameters;
-            ul.InnerHtml += GetPaginationItem("&laquo;", url, liClass, Resources.First);
+            ul.InnerHtml += GetPaginationItem("&laquo;", url, liClass, FluentMvcGridResources.First);
 
             var num = pageCount - 1;
             var num1 = pageIndex + numericLinksCount / 2;
@@ -104,11 +104,11 @@ namespace FluentMvcGrid
             liClass = pageIndex == pageCount ? "disabled" : "";
             parameters["page"] = pageCount.ToString(CultureInfo.InvariantCulture);
             url = path + "?" + parameters;
-            ul.InnerHtml += GetPaginationItem("&raquo;", url, liClass, Resources.Last);
+            ul.InnerHtml += GetPaginationItem("&raquo;", url, liClass, FluentMvcGridResources.Last);
 
             if (paginationInfo)
             {
-                var info = string.Format(Resources.PaginationInfo, pageIndex, pageCount, totalCount);
+                var info = string.Format(FluentMvcGridResources.PaginationInfo, pageIndex, pageCount, totalCount);
                 ul.InnerHtml += string.Format("<li class='disabled'><span>{0}</span></li>", info);
             }
 
@@ -150,7 +150,7 @@ namespace FluentMvcGrid
                 }
                 ul.MergeAttributes(attributes);
             }
-            var text = Resources.Previous;
+            var text = FluentMvcGridResources.Previous;
             var liClass = "";
             if (alignedLinks)
             {
@@ -172,7 +172,7 @@ namespace FluentMvcGrid
 
             //Next
             parameters["page"] = (pageIndex + 1).ToString(CultureInfo.InvariantCulture);
-            text = Resources.Next;
+            text = FluentMvcGridResources.Next;
             liClass = "";
             if (pageIndex + 1 > pageCount)
             {
