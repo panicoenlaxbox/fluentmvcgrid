@@ -1,3 +1,5 @@
+using System;
+
 namespace FluentMvcGrid
 {
     public class FluentMvcGridPagination
@@ -10,6 +12,7 @@ namespace FluentMvcGrid
         private bool _paginationInfo = true;
         private PaginationSizing _paginationSizing = PaginationSizing.Normal;
         private int _totalCount;
+        private bool _showIfEmpty = true;
 
         public FluentMvcGridPagination Enabled(bool enabled)
         {
@@ -46,6 +49,12 @@ namespace FluentMvcGrid
             return this;
         }
 
+        public FluentMvcGridPagination ShowIfEmpty(bool showIfEmpty)
+        {
+            _showIfEmpty = showIfEmpty;
+            return this;
+        }
+
         public FluentMvcGridPagination NumericLinksCount(int numericLinksCount)
         {
             _numericLinksCount = numericLinksCount;
@@ -66,6 +75,10 @@ namespace FluentMvcGrid
 
         internal string Build(BootstrapVersion bootstrapVersion)
         {
+            if (_totalCount <= _pageSize && !_showIfEmpty)
+            {
+                return "";
+            }
             return Pagination.GetDefaultPagination(_pageIndex, _totalCount, _pageSize, _paginationSizing,
                     _numericLinksCount, _paginationInfo, _htmlAttributes, bootstrapVersion).ToString();
         }
