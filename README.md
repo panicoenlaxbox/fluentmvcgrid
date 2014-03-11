@@ -99,7 +99,7 @@ Una columna tiene los siguentes métodos directos (un tipo básico):
 
 Por defecto, una columna no es ordenable. En caso de hacerla ordenable, también habremos de facilitar el campo por el que se ordenará con Sort.
 
-    .AddColumn(column => column.HeaderText("Nombre").Sortable(true).SortBy("FirstName")
+    .AddColumn(column => column.HeaderText("Nombre").Sortable(true).SortBy("FirstName"))
 
 Que la columna no sea ordenable por defecto responde a que ordenar no es gratis (hay que implementar la ordenación en código), luego en mi caso me he dado cuenta de que es más económico activar la ordenación de las columnas por las que se permite ordenar que no al contrario.
 
