@@ -121,6 +121,13 @@ El método HeaderClass (clase que se aplicará a la etiqueta th) es del tipo *Fu
 
     .HeaderClass(() => "text-center")
 
+Además de esta forma verbose para configurar una columna también están disponibles estas otras como shortcuts:
+
+    .AddColumn("Nombre", item => item.FirstName)
+    .AddColumn("Nombre", item => item.FirstName, true, "FirstName")
+
+En la primera se agrega la columna con sus valores por defecto y en la segunda podemos especificar si será o no ordenable y el campo de la ordenación.
+
 ## FluentMvcGridFooterColumn ##
 
 Podemos agregar cualquier número de celdas al pie de la tabla. 
@@ -165,12 +172,17 @@ En la grilla tenemos disponible el método Pagination con los siguientes método
 - NumericLinksCount, por defecto 5
 - Info, por defecto true
 - Sizing, por defecto normal
+- ShowIfEmpty, por defecto true
 
 En realidad, casi todos estos métodos se corresponden con los parámetros solicitados por el primero de los helpers de paginacion, GetDefaultPagination.
 
     .Pagination(pagination => pagination.PageIndex(1).TotalCount(50))
 
 Lógicamente, los métodos PageIndex y TotalCount no pueden ir hardcodeados y tendremos que obtenerlos desde el modelo de la vista. Hay un ejemplo completo de paginación en el controlador Home.
+
+Además de la configuración verbose, hay un shortcut para los mínimos datos requeridos para paginar:
+
+    .Pagination(pageIndex, pageSize, totalCount)
 
 # Atributos data #
 
