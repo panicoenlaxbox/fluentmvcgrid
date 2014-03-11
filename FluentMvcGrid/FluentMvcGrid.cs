@@ -89,6 +89,19 @@ namespace FluentMvcGrid
             return this;
         }
 
+        public FluentMvcGrid<T> AddColumn(string headerText, Func<T, object> expression)
+        {
+            return AddColumn(headerText, expression, false, "");
+        }
+
+        public FluentMvcGrid<T> AddColumn(string headerText, Func<T, object> expression, bool sortable, string sortBy)
+        {
+            var newColumn = new FluentMvcGridColumn<T>();
+            newColumn.HeaderText(headerText).Format(expression).Sortable(sortable).SortBy(sortBy);
+            _columns.Add(newColumn);            
+            return this;
+        }
+
         public FluentMvcGrid<T> AddFooterColumn(Action<FluentMvcGridFooterColumn> footerColumn)
         {
             var newFooterColumn = new FluentMvcGridFooterColumn();
