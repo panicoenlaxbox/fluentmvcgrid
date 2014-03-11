@@ -110,6 +110,12 @@ namespace FluentMvcGrid
             return this;
         }
 
+        public FluentMvcGrid<T> Pagination(int pageIndex, int pageSize, int totalCount)
+        {
+            _pagination.PageIndex(pageIndex).PageSize(pageSize).TotalCount(totalCount);
+            return this;
+        }
+
         public FluentMvcGrid<T> Pagination(Action<FluentMvcGridPagination> pagination)
         {
             pagination(_pagination);
