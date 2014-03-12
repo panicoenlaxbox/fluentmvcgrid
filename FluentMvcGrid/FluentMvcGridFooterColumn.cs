@@ -14,9 +14,9 @@ namespace FluentMvcGrid
             return this;
         }
 
-        public FluentMvcGridFooterColumn ColSpan(int colSpan)
+        public FluentMvcGridFooterColumn ColSpan(int value)
         {
-            _colSpan = colSpan;
+            _colSpan = value;
             return this;
         }
 

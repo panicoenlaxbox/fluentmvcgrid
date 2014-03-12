@@ -1,5 +1,3 @@
-using System;
-
 namespace FluentMvcGrid
 {
     public class FluentMvcGridPagination
@@ -11,8 +9,8 @@ namespace FluentMvcGrid
         private int _pageSize = 10;
         private bool _paginationInfo = true;
         private PaginationSizing _paginationSizing = PaginationSizing.Normal;
-        private int _totalCount;
         private bool _showIfEmpty = true;
+        private int _totalCount;
 
         public FluentMvcGridPagination Enabled(bool enabled)
         {
@@ -25,51 +23,51 @@ namespace FluentMvcGrid
             return _enabled;
         }
 
-        public FluentMvcGridPagination PageSize(int pageSize)
+        public FluentMvcGridPagination PageSize(int value)
         {
-            _pageSize = pageSize;
+            _pageSize = value;
             return this;
         }
 
-        public FluentMvcGridPagination TotalCount(int totalCount)
+        public FluentMvcGridPagination TotalCount(int value)
         {
-            _totalCount = totalCount;
+            _totalCount = value;
             return this;
         }
 
-        public FluentMvcGridPagination PageIndex(int pageIndex)
+        public FluentMvcGridPagination PageIndex(int value)
         {
-            _pageIndex = pageIndex;
+            _pageIndex = value;
             return this;
         }
 
-        public FluentMvcGridPagination Sizing(PaginationSizing paginationSizing)
+        public FluentMvcGridPagination Sizing(PaginationSizing value)
         {
-            _paginationSizing = paginationSizing;
+            _paginationSizing = value;
             return this;
         }
 
-        public FluentMvcGridPagination ShowIfEmpty(bool showIfEmpty)
+        public FluentMvcGridPagination ShowIfEmpty(bool value)
         {
-            _showIfEmpty = showIfEmpty;
+            _showIfEmpty = value;
             return this;
         }
 
-        public FluentMvcGridPagination NumericLinksCount(int numericLinksCount)
+        public FluentMvcGridPagination NumericLinksCount(int value)
         {
-            _numericLinksCount = numericLinksCount;
+            _numericLinksCount = value;
             return this;
         }
 
-        public FluentMvcGridPagination Info(bool paginationInfo)
+        public FluentMvcGridPagination Info(bool value)
         {
-            _paginationInfo = paginationInfo;
+            _paginationInfo = value;
             return this;
         }
 
-        public FluentMvcGridPagination HtmlAttributes(object htmlAttributes)
+        public FluentMvcGridPagination HtmlAttributes(object value)
         {
-            _htmlAttributes = htmlAttributes;
+            _htmlAttributes = value;
             return this;
         }
 

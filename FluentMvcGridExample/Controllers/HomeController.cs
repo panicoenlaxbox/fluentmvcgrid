@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
@@ -22,7 +23,8 @@ namespace FluentMvcGridExample.Controllers
         // GET: /Home/
         public ActionResult Index(int page = 1, string sort = "FirstName", string sortDir = "ASC")
         {
-            var persons = ReadJsonDb();
+            //var persons = ReadJsonDb();
+            var persons = Enumerable.Empty<Person>();
             switch (sort)
             {
                 case "FirstName":
