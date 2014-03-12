@@ -32,15 +32,17 @@ Lo primero e indispensable es tipar la grilla a un modelo que implemente *IEnume
 
     Html.FluentMvcGrid(Model)
 
-Algunos métodos de la grilla esperan recibir una cadena sin más...
+Algunos métodos de la grilla esperan recibir una valor sin más...
 
 - Id
 - Class
+- HeadersIfEof
 
 Por ejemplo:
 
     .Id("table1")
     .Class("table table-striped table-hover table-bordered")
+	.HeadersIfEof(true)
 
 Otros métodos esperan recibir un Razor Template, es decir, un *Func<T, object>*
 

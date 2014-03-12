@@ -21,15 +21,15 @@ namespace FluentMvcGrid
             return this;
         }
 
-        public FluentMvcGridColumn<T> HeaderText(string headerText)
+        public FluentMvcGridColumn<T> HeaderText(string value)
         {
-            _headerText = headerText;
+            _headerText = value;
             return this;
         }
 
-        public FluentMvcGridColumn<T> SortBy(string sortBy)
+        public FluentMvcGridColumn<T> SortBy(string value)
         {
-            _sortBy = sortBy;
+            _sortBy = value;
             return this;
         }
 
@@ -39,9 +39,9 @@ namespace FluentMvcGrid
             return this;
         }
 
-        public FluentMvcGridColumn<T> Sortable(bool sortable)
+        public FluentMvcGridColumn<T> Sortable(bool value)
         {
-            _sortable = sortable;
+            _sortable = value;
             return this;
         }
 
