@@ -97,7 +97,10 @@ namespace FluentMvcGrid
 
         public FluentMvcGrid<T> AddColumn(string headerText, Func<T, object> expression)
         {
-            return AddColumn(headerText, expression, "");
+            var newColumn = new FluentMvcGridColumn<T>();
+            newColumn.HeaderText(headerText).Format(expression);
+            _columns.Add(newColumn);
+            return this;
         }
 
         public FluentMvcGrid<T> AddColumn(string headerText, Func<T, object> expression, string sortBy)
