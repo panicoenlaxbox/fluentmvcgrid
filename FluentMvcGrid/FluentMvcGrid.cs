@@ -20,7 +20,7 @@ namespace FluentMvcGrid
         private Func<dynamic, object> _htmlBefore;
         private string _id;
         private Func<T, object> _rowClass;
-        private bool _showHeadersIfEof = false;
+        private bool _showHeadersIfEof;
 
         public FluentMvcGrid(IEnumerable<T> items)
         {
@@ -232,6 +232,35 @@ namespace FluentMvcGrid
             }            
         }
 
+        private void SetBodyWhenEof(TagBuilder table)
+        {
+            var eof = Utilities.EvalExpression(_eof, null);
+            if (!string.IsNullOrWhiteSpace(eof))
+            {
+                var tbody = new TagBuilder("tbody");
+                var tr = new TagBuilder("tr");
+                var td = new TagBuilder("td");
+                td.Attributes.Add("colspan", _columns.Count.ToString());
+                td.InnerHtml = eof;
+                tr.InnerHtml = td.ToString();
+                tbody.InnerHtml = tr.ToString();
+                table.InnerHtml += tbody.ToString();
+            }
+        }
+
+        private void SetFooter(TagBuilder table)
+        {
+            var tfoot = new TagBuilder("tfoot");
+
+            SetFooterColumns(tfoot);
+            SetPagination(tfoot);
+
+            if (!string.IsNullOrWhiteSpace(tfoot.InnerHtml))
+            {
+                table.InnerHtml += tfoot.ToString();
+            }
+        }
+
         private string Build()
         {
             if (!_items.Any() && !_showHeadersIfEof)
@@ -246,30 +275,11 @@ namespace FluentMvcGrid
 
             if (!_items.Any() && _showHeadersIfEof)
             {
-                var eof= Utilities.EvalExpression(_eof, null);
-                if (!string.IsNullOrWhiteSpace(eof))
-                {
-                    var tbody = new TagBuilder("tbody");
-                    var tr = new TagBuilder("tr");
-                    var td = new TagBuilder("td");
-                    td.Attributes.Add("colspan", _columns.Count.ToString());
-                    td.InnerHtml = eof;
-                    tr.InnerHtml = td.ToString();
-                    tbody.InnerHtml = tr.ToString();
-                    table.InnerHtml += tbody.ToString();
-                }
+                SetBodyWhenEof(table);
                 return table.ToString();
             }
 
-            var tfoot = new TagBuilder("tfoot");
-
-            SetFooterColumns(tfoot);
-            SetPagination(tfoot);
-
-            if (!string.IsNullOrWhiteSpace(tfoot.InnerHtml))
-            {
-                table.InnerHtml += tfoot.ToString();
-            }
+            SetFooter(table);
 
             SetContent(table);
             SetAttributes(table);
