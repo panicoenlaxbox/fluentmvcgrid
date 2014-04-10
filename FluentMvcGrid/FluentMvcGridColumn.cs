@@ -77,7 +77,7 @@ namespace FluentMvcGrid
                 var value = Utilities.EvalExpression(expression, item);
                 if (!string.IsNullOrWhiteSpace(value))
                 {
-                    td.MergeAttribute(key, value);
+                    td.MergeAttribute(key, value, true);
                 }
             }
             return td.ToString();

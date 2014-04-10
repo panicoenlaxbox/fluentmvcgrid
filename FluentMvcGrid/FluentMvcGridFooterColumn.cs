@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 
 namespace FluentMvcGrid
 {
     public class FluentMvcGridFooterColumn
     {
+        private readonly List<Tuple<string, Func<dynamic, object>>> _attributes = new List<Tuple<string, Func<dynamic, object>>>();
         private int _colSpan = 1;
         private Func<dynamic, object> _format;
 
@@ -25,6 +27,12 @@ namespace FluentMvcGrid
             return _colSpan;
         }
 
+        public FluentMvcGridFooterColumn AddAttribute(string key, Func<dynamic, object> expression)
+        {
+            _attributes.Add(new Tuple<string, Func<dynamic, object>>(key, expression));
+            return this;
+        }
+
         internal string Build()
         {
             var td = new TagBuilder("td");
@@ -33,6 +41,7 @@ namespace FluentMvcGrid
                 td.MergeAttribute("colspan", _colSpan.ToString());
             }
             var format = Utilities.EvalExpression(_format, null);
+            Utilities.SetAttributes(td, _attributes);
             if (!string.IsNullOrWhiteSpace(format))
             {
                 td.InnerHtml = format;
