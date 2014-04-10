@@ -107,7 +107,7 @@ namespace FluentMvcGrid
         {
             var newColumn = new FluentMvcGridColumn<T>();
             newColumn.HeaderText(headerText).Format(expression).Sortable(true).SortBy(sortBy);
-            _columns.Add(newColumn);            
+            _columns.Add(newColumn);
             return this;
         }
 
@@ -148,7 +148,7 @@ namespace FluentMvcGrid
             else
             {
                 table.AddCssClass("table");
-            }            
+            }
         }
 
         private void SetHeader(TagBuilder table)
@@ -169,21 +169,31 @@ namespace FluentMvcGrid
             {
                 if (_footerColumns.Count == 1)
                 {
-                    _footerColumns.First().ColSpan(_columns.Count);
+                    var footerColumn = _footerColumns.First();
+                    if (footerColumn.GetColSpan() <= 1)
+                    {
+                        footerColumn.ColSpan(_columns.Count);
+                    }
                 }
                 var tr = new TagBuilder("tr");
                 tr.MergeAttribute("data-role", "footer");
+                var numberOfColSpan = 0;
                 foreach (var footerColumn in _footerColumns)
                 {
+                    numberOfColSpan += footerColumn.GetColSpan();
                     tr.InnerHtml += footerColumn.Build();
                 }
+                if (numberOfColSpan < _columns.Count)
+                {
+                    tr.InnerHtml += string.Format("<td colspan='{0}'>&nbsp;</td>", _columns.Count - numberOfColSpan);
+                }
                 tfoot.InnerHtml += tr.ToString();
-            }            
+            }
         }
 
         private void SetPagination(TagBuilder tfoot)
         {
-            if (_pagination.IsEnabled())
+            if (_pagination.GetEnabled())
             {
                 var tr = new TagBuilder("tr");
                 tr.MergeAttribute("data-role", "pagination");
@@ -195,7 +205,7 @@ namespace FluentMvcGrid
                     tr.InnerHtml = td.ToString();
                     tfoot.InnerHtml += tr.ToString();
                 }
-            }            
+            }
         }
 
         private void SetContent(TagBuilder table)
@@ -215,7 +225,7 @@ namespace FluentMvcGrid
                 }
                 tbody.InnerHtml += tr.ToString();
             }
-            table.InnerHtml += tbody.ToString();            
+            table.InnerHtml += tbody.ToString();
         }
 
         private void SetAttributes(TagBuilder table)
@@ -229,7 +239,7 @@ namespace FluentMvcGrid
                 {
                     table.MergeAttribute(key, value);
                 }
-            }            
+            }
         }
 
         private void SetBodyWhenEof(TagBuilder table)
@@ -267,10 +277,10 @@ namespace FluentMvcGrid
             {
                 return Utilities.EvalExpression(_eof, null);
             }
-            
-            var table = new TagBuilder("table");            
 
-            SetGeneralAttributes(table);                        
+            var table = new TagBuilder("table");
+
+            SetGeneralAttributes(table);
             SetHeader(table);
 
             if (!_items.Any() && _showHeadersIfEof)

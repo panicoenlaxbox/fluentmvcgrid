@@ -23,8 +23,7 @@ namespace FluentMvcGridExample.Controllers
         // GET: /Home/
         public ActionResult Index(int page = 1, string sort = "FirstName", string sortDir = "ASC")
         {
-            //var persons = ReadJsonDb();
-            var persons = Enumerable.Empty<Person>();
+            var persons = ReadJsonDb();
             switch (sort)
             {
                 case "FirstName":
