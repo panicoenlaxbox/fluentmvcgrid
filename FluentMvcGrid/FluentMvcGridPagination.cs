@@ -18,7 +18,7 @@ namespace FluentMvcGrid
             return this;
         }
 
-        internal bool IsEnabled()
+        internal bool GetEnabled()
         {
             return _enabled;
         }

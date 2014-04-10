@@ -20,10 +20,15 @@ namespace FluentMvcGrid
             return this;
         }
 
+        internal int GetColSpan()
+        {
+            return _colSpan;
+        }
+
         internal string Build()
         {
             var td = new TagBuilder("td");
-            if (_colSpan > 0)
+            if (_colSpan > 1)
             {
                 td.MergeAttribute("colspan", _colSpan.ToString());
             }
