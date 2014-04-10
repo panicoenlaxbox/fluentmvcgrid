@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Web.Mvc;
 
 namespace FluentMvcGrid
 {
@@ -43,6 +45,20 @@ namespace FluentMvcGrid
                 return string.Empty;
             }
             return value.ToString();
+        }
+
+        internal static void SetAttributes(TagBuilder tag, IEnumerable<Tuple<string, Func<dynamic, object>>> attributes)
+        {
+            foreach (var attribute in attributes)
+            {
+                var key = attribute.Item1;
+                var expression = attribute.Item2;
+                var value = EvalExpression(expression, null);
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    tag.MergeAttribute(key, value, true);
+                }
+            }
         }
     }
 }

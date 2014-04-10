@@ -16,4 +16,4 @@
         .AddColumn(column => column.Format(@<text>@string.Format("{0:d}", item.Birthday)</text>).HeaderText("Cumpleaños"))
         .Pagination(pagination => pagination.PageIndex(Model.PageIndex).TotalCount(Model.TotalCount))
         .Eof(@<p>No hay registros que mostrar</p>)
-        .HeadersIfEof(false))
+                    .HeadersIfEof(false))

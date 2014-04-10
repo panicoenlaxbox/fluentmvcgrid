@@ -185,7 +185,7 @@ namespace FluentMvcGrid
                 }
                 if (numberOfColSpan < _columns.Count)
                 {
-                    tr.InnerHtml += string.Format("<td colspan='{0}'>&nbsp;</td>", _columns.Count - numberOfColSpan);
+                    tr.InnerHtml += string.Format("<td colspan='{0}'></td>", _columns.Count - numberOfColSpan);
                 }
                 tfoot.InnerHtml += tr.ToString();
             }
@@ -226,20 +226,6 @@ namespace FluentMvcGrid
                 tbody.InnerHtml += tr.ToString();
             }
             table.InnerHtml += tbody.ToString();
-        }
-
-        private void SetAttributes(TagBuilder table)
-        {
-            foreach (var attribute in _attributes)
-            {
-                var key = attribute.Item1;
-                var expression = attribute.Item2;
-                var value = Utilities.EvalExpression(expression, null);
-                if (!string.IsNullOrWhiteSpace(value))
-                {
-                    table.MergeAttribute(key, value);
-                }
-            }
         }
 
         private void SetBodyWhenEof(TagBuilder table)
@@ -292,7 +278,7 @@ namespace FluentMvcGrid
             SetFooter(table);
 
             SetContent(table);
-            SetAttributes(table);
+            Utilities.SetAttributes(table, _attributes);
 
             var htmlBefore = Utilities.EvalExpression(_htmlBefore, null);
             var htmlAfter = Utilities.EvalExpression(_htmlAfter, null);

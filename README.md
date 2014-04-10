@@ -87,7 +87,7 @@ Con AddAttribute podemos agregar atributos a la grilla (o a sus columnas) con Ra
     .AddAttribute("style",o => "margin: 50px auto;")
     .AddAttribute("lang", @<text>es</text>)
 
-La diferencia en AddAttribute entre FluentMvcGrid y FluentMvcGridColumn, es que la primera recibe un *Func<dynamic, object>* y la segunda un *Func<T, object>*. Es decir, con *FluentMvcGridColumn* tenemos un elemento *item* que es la fila actualmente iterada.
+La diferencia en AddAttribute entre FluentMvcGrid y FluentMvcGridColumn, es que la primera recibe un *Func<dynamic, object>* y la segunda un *Func<T, object>*. Es decir, con *FluentMvcGridColumn* tenemos un elemento *item* que es la fila actualmente iterada, mientras que con *FluentMvcGrid* el parámetro de tipo dynamic es nulo.
 
 También cabe mencionar que AddAttribute reemplazará cualquier atributo asignado previamente con el que coincida, esto es que prevalecerá frente a los métodos Class o Id, claro está en el caso de agregar un atributo con la clave class o id.
 
@@ -138,7 +138,9 @@ Tanto el contenido de la celda como el número de celdas que agrupara (colspan) 
 
     .AddFooterColumn(footerColumn => footerColumn.ColSpan(3).Format(@<text>Pie</text>))
 
-Si sólo agregamos una celda al pie, el valor de ColSpan será calculado automáticamente al número de columnas que tenga la grilla y podremos no especificarlo. Una pequeña ayuda, sólo eso.
+Si sólo agregamos una celda al pie y el valor de ColSpan es distinto de 1 (valor predeterminado), el valor de ColSpan será calculado automáticamente al número de columnas que tenga la grilla. Una pequeña ayuda, sólo eso.
+
+Al igual que FluentMvcGrid, también tenemos disponible el método AddAttribute que recibe un parámetro dynamic con el valor null (no hay fila sobre la que iterar).
 
 ## FluentMvcGridPagination ##
 
