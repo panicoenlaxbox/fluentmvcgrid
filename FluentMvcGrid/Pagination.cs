@@ -201,7 +201,7 @@ namespace FluentMvcGrid
             };
             if (!string.IsNullOrWhiteSpace(url))
             {
-                a.MergeAttribute("href", url);
+                a.Attributes.Add("href", url);
             }
             var li = new TagBuilder("li");
             if (!string.IsNullOrWhiteSpace(liClass))
@@ -211,7 +211,7 @@ namespace FluentMvcGrid
             li.InnerHtml += a.ToString();
             if (!string.IsNullOrWhiteSpace(title))
             {
-                li.MergeAttribute("title", title);
+                li.Attributes.Add("title", title);
             }
             return li.ToString();
         }

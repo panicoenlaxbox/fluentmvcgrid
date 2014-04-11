@@ -11,9 +11,8 @@ namespace FluentMvcGrid
         private readonly List<Tuple<string, Func<dynamic, object>>> _attributes = new List<Tuple<string, Func<dynamic, object>>>();
         private readonly List<FluentMvcGridColumn<T>> _columns = new List<FluentMvcGridColumn<T>>();
         private readonly List<FluentMvcGridFooterColumn> _footerColumns = new List<FluentMvcGridFooterColumn>();
-        private readonly IEnumerable<T> _items;
+        private IEnumerable<T> _items;
         private readonly FluentMvcGridPagination _pagination = new FluentMvcGridPagination();
-        private BootstrapVersion _bootstrapVersion = BootstrapVersion.Bootstrap3;
         private string _class;
         private Func<dynamic, object> _eof;
         private Func<dynamic, object> _htmlAfter;
@@ -21,10 +20,12 @@ namespace FluentMvcGrid
         private string _id;
         private Func<T, object> _rowClass;
         private bool _showHeadersIfEof;
+        private readonly Configuration _configuration;
 
         public FluentMvcGrid(IEnumerable<T> items)
         {
             _items = items;
+            _configuration = new Configuration();
         }
 
         public string ToHtmlString()
@@ -33,9 +34,16 @@ namespace FluentMvcGrid
             return Build();
         }
 
+        [Obsolete("Use Configuration method")]
         public FluentMvcGrid<T> Bootstrap(BootstrapVersion value)
         {
-            _bootstrapVersion = value;
+            _configuration.Bootstrap(value);
+            return this;
+        }
+
+        public FluentMvcGrid<T> Configuration(Action<Configuration> configuration)
+        {
+            configuration(_configuration);
             return this;
         }
 
@@ -111,6 +119,14 @@ namespace FluentMvcGrid
             return this;
         }
 
+        public FluentMvcGrid<T> AddColumn(string headerText, Func<T, object> expression, Func<T, object> @class)
+        {
+            var newColumn = new FluentMvcGridColumn<T>();
+            newColumn.HeaderText(headerText).Format(expression).Class(@class);
+            _columns.Add(newColumn);
+            return this;
+        }
+
         public FluentMvcGrid<T> AddFooterColumn(Action<FluentMvcGridFooterColumn> footerColumn)
         {
             var newFooterColumn = new FluentMvcGridFooterColumn();
@@ -135,7 +151,7 @@ namespace FluentMvcGrid
         {
             if (!string.IsNullOrWhiteSpace(_id))
             {
-                table.MergeAttribute("id", _id);
+                table.Attributes.Add("id", _id);
             }
             if (!string.IsNullOrWhiteSpace(_class))
             {
@@ -157,7 +173,7 @@ namespace FluentMvcGrid
             var tr = new TagBuilder("tr");
             foreach (var column in _columns)
             {
-                tr.InnerHtml += column.BuildHeader();
+                tr.InnerHtml += column.BuildHeader(_configuration);
             }
             thead.InnerHtml = tr.ToString();
             table.InnerHtml += thead.ToString();
@@ -176,12 +192,12 @@ namespace FluentMvcGrid
                     }
                 }
                 var tr = new TagBuilder("tr");
-                tr.MergeAttribute("data-role", "footer");
+                tr.Attributes.Add("data-role", "footer");
                 var numberOfColSpan = 0;
                 foreach (var footerColumn in _footerColumns)
                 {
                     numberOfColSpan += footerColumn.GetColSpan();
-                    tr.InnerHtml += footerColumn.Build();
+                    tr.InnerHtml += footerColumn.Build(_configuration);
                 }
                 if (numberOfColSpan < _columns.Count)
                 {
@@ -196,10 +212,10 @@ namespace FluentMvcGrid
             if (_pagination.GetEnabled())
             {
                 var tr = new TagBuilder("tr");
-                tr.MergeAttribute("data-role", "pagination");
+                tr.Attributes.Add("data-role", "pagination");
                 var td = new TagBuilder("td");
-                td.MergeAttribute("colspan", _columns.Count.ToString());
-                td.InnerHtml = _pagination.Build(_bootstrapVersion);
+                td.Attributes.Add("colspan", _columns.Count.ToString());
+                td.InnerHtml = _pagination.Build(_configuration);
                 if (!string.IsNullOrWhiteSpace(td.InnerHtml))
                 {
                     tr.InnerHtml = td.ToString();
@@ -221,7 +237,7 @@ namespace FluentMvcGrid
                 }
                 foreach (var column in _columns)
                 {
-                    tr.InnerHtml += column.BuildContent(item);
+                    tr.InnerHtml += column.BuildContent(item, _configuration);
                 }
                 tbody.InnerHtml += tr.ToString();
             }
@@ -259,6 +275,11 @@ namespace FluentMvcGrid
 
         private string Build()
         {
+            if (_items == null)
+            {
+                _items = Enumerable.Empty<T>();
+            }
+
             if (!_items.Any() && !_showHeadersIfEof)
             {
                 return Utilities.EvalExpression(_eof, null);
