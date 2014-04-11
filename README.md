@@ -130,8 +130,9 @@ Además de esta forma verbose para configurar una columna también hay disponibl
     .AddColumn("Nombre", item => item.FirstName)
     .AddColumn("Nombre", item => item.FirstName, "FirstName")
 	.AddColumn("Nombre", item => item.FirstName, item => "text-right")
+	.AddColumn("Nombre", item => item.FirstName, item => "text-right", "FirstName")
 
-En la primera se agrega la columna con sus valores por defecto, en la segunda podemos especificar el campo de la ordenación (por lo que se asume ordenable) y en la tercera podemos especificar una clase CSS.
+En la primera se agrega la columna con sus valores por defecto, en la segunda podemos especificar el campo de la ordenación (por lo que se asume ordenable), en la tercera podemos especificar una clase CSS y en la cuarta podemos especificar tanto una clase CSS como la ordenación.
 
 ## FluentMvcGridFooterColumn ##
 
