@@ -57,14 +57,11 @@ namespace FluentMvcGrid
             return this;
         }
 
-        internal string BuildContent(T item)
+        internal string BuildContent(T item, Configuration configuration)
         {
             var td = new TagBuilder("td");
             var format = Utilities.EvalExpression(_format, item);
-            if (!string.IsNullOrWhiteSpace(format))
-            {
-                td.InnerHtml = format;
-            }
+            td.InnerHtml = Utilities.GetText(format, configuration.GetWhiteSpace());
             var @class = Utilities.EvalExpression(_class, item);
             if (!string.IsNullOrWhiteSpace(@class))
             {
@@ -83,7 +80,7 @@ namespace FluentMvcGrid
             return td.ToString();
         }
 
-        internal string BuildHeader()
+        internal string BuildHeader(Configuration configuration)
         {
             var th = new TagBuilder("th");
             if (_sortable)
@@ -109,7 +106,7 @@ namespace FluentMvcGrid
             }
             else
             {
-                th.InnerHtml = _headerText;
+                th.InnerHtml = Utilities.GetText(_headerText, configuration.GetWhiteSpace());
             }
             var headerClass = Utilities.EvalExpression(_headerClass);
             if (!string.IsNullOrWhiteSpace(headerClass))

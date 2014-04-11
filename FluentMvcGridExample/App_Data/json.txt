@@ -254,7 +254,7 @@
     {
         "age": 21,
         "firstName": "Bean",
-        "lastName": "Rodriquez",
+        "lastName": "",
         "gender": "male",
         "birthday": "2006-09-18"
     },

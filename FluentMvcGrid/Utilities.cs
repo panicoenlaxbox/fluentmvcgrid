@@ -60,5 +60,18 @@ namespace FluentMvcGrid
                 }
             }
         }
+
+        internal static string GetText(string text, WhiteSpace whiteSpace)
+        {
+            if (!string.IsNullOrEmpty(text))
+            {
+                return text;
+            }
+            if (whiteSpace == WhiteSpace.Nbsp)
+            {
+                return "&nbsp;";
+            }
+            return "";
+        }
     }
 }

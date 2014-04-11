@@ -32,6 +32,8 @@ Lo primero e indispensable es tipar la grilla a un modelo que implemente *IEnume
 
     Html.FluentMvcGrid(Model)
 
+Si Model es null se convertirá a una secuencia vacía con *Enumerable.Empty<T\>()* 
+
 Algunos métodos de la grilla esperan recibir una valor sin más...
 
 - Id
@@ -123,12 +125,13 @@ El método HeaderClass (clase que se aplicará a la etiqueta th) es del tipo *Fu
 
     .HeaderClass(() => "text-center")
 
-Además de esta forma verbose para configurar una columna también están disponibles estas otras como shortcuts:
+Además de esta forma verbose para configurar una columna también hay disponibles otras sobrecargas que intentan facilitar la escritura de los casos más típicos:
 
     .AddColumn("Nombre", item => item.FirstName)
-    .AddColumn("Nombre", item => item.FirstName, true, "FirstName")
+    .AddColumn("Nombre", item => item.FirstName, "FirstName")
+	.AddColumn("Nombre", item => item.FirstName, item => "text-right")
 
-En la primera se agrega la columna con sus valores por defecto y en la segunda podemos especificar si será o no ordenable y el campo de la ordenación.
+En la primera se agrega la columna con sus valores por defecto, en la segunda podemos especificar el campo de la ordenación (por lo que se asume ordenable) y en la tercera podemos especificar una clase CSS.
 
 ## FluentMvcGridFooterColumn ##
 
@@ -199,11 +202,19 @@ Estos 2 atributos (ambos en elementos tfoot) resultan útiles para localizar con
 
 # Compatibilidad con Boostrap 2 #
 
-En principio la grilla estaba pensanda para funcionar con los estilos de Bootstrap 3, pero como hay aplicaciones que todavia utilizando la versión 2, se ha agregado el método Bootstrap a la clase FluentMvcGrid.
+En principio la grilla estaba pensada para funcionar con los estilos de Bootstrap 3, pero como hay aplicaciones que todavía está usando la versión 2, se ha agregado el método Bootstrap a la clase FluentMvcGrid.
 
     .Bootstrap(BootstrapVersion.Bootstrap2)
 
 Por ahora, este método sólo incide en el HTML generado para la paginación por defecto.
+
+#Configuración#
+
+El método Bootstrap de la clase FluentMvcGrid ha sido marcado como obsoleto. Por el contrario, se ha creado una nueva clase Configuration para guardar la configuración global de la grilla.
+
+Las propiedades del objeto Configuration son Bootstrap y WhiteSpace.
+
+    .Configuration(configuration => configuration.Bootstrap(BootstrapVersion.Bootstrap3).WhiteSpace(WhiteSpace.Nbsp))
 
 # Localización #
 
