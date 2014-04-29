@@ -1,3 +1,5 @@
+using System;
+
 namespace FluentMvcGrid
 {
     public class FluentMvcGridPagination
@@ -47,6 +49,7 @@ namespace FluentMvcGrid
             return this;
         }
 
+        [Obsolete("Unused")]
         public FluentMvcGridPagination ShowIfEmpty(bool value)
         {
             _showIfEmpty = value;
@@ -73,10 +76,6 @@ namespace FluentMvcGrid
 
         internal string Build(Configuration configuration)
         {
-            if (_totalCount <= _pageSize && !_showIfEmpty)
-            {
-                return "";
-            }
             return Pagination.GetDefaultPagination(_pageIndex, _totalCount, _pageSize, _paginationSizing,
                     _numericLinksCount, _paginationInfo, _htmlAttributes, configuration.GetBootstrapVersion()).ToString();
         }
