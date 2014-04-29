@@ -180,7 +180,6 @@ En la grilla tenemos disponible el método Pagination con los siguientes método
 - NumericLinksCount, por defecto 5
 - Info, por defecto true
 - Sizing, por defecto normal
-- ShowIfEmpty, por defecto true
 
 En realidad, casi todos estos métodos se corresponden con los parámetros solicitados por el primero de los helpers de paginacion, GetDefaultPagination.
 
@@ -196,6 +195,7 @@ Además de la configuración verbose, hay un shortcut para los mínimos datos re
 
 El único marcado que emite de forma fija el helper de la grilla es:
 
+- data-current-url="*currentUrl*" como atributo en el elemento *table*
 - data-role="footer"
 - data-role="pagination"
 

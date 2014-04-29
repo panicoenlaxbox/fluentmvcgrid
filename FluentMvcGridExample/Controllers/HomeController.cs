@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
@@ -19,11 +18,17 @@ namespace FluentMvcGridExample.Controllers
             }
         }
 
+        private IEnumerable<Person> ReadJsonDb(int numOfRecords)
+        {
+            var retval = ReadJsonDb();
+            return numOfRecords > 0 ? retval.Take(numOfRecords) : retval;
+        }
+
         //
         // GET: /Home/
         public ActionResult Index(int page = 1, string sort = "FirstName", string sortDir = "ASC")
         {
-            var persons = ReadJsonDb();
+            var persons = ReadJsonDb();            
             switch (sort)
             {
                 case "FirstName":

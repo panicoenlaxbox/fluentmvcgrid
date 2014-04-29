@@ -155,6 +155,20 @@ namespace FluentMvcGrid
             return this;
         }
 
+        private string GetCurrentUrl()
+        {
+            var parameters = HttpUtility.ParseQueryString(HttpContext.Current.Request.Url.Query);
+            if (string.IsNullOrWhiteSpace(parameters["page"]) && _items.Any())
+            {
+                parameters.Add("page", "1");
+            }
+            if (parameters.Keys.Count > 0)
+            {
+                return HttpContext.Current.Request.Path + "?" + parameters;
+            }
+            return HttpContext.Current.Request.Path;
+        }
+
         private void SetGeneralAttributes(TagBuilder table)
         {
             if (!string.IsNullOrWhiteSpace(_id))
@@ -173,6 +187,7 @@ namespace FluentMvcGrid
             {
                 table.AddCssClass("table");
             }
+            table.Attributes.Add("data-current-url", GetCurrentUrl());
         }
 
         private void SetHeader(TagBuilder table)

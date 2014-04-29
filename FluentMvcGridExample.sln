@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{4DE3FC
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentMvcGrid.Tests", "FluentMvcGrid.Tests\FluentMvcGrid.Tests.csproj", "{DA87187F-FCD8-4D99-8A2F-4222A4273416}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +30,10 @@ Global
 		{7E9803E4-1906-4583-8394-4F353DF5C895}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E9803E4-1906-4583-8394-4F353DF5C895}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E9803E4-1906-4583-8394-4F353DF5C895}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA87187F-FCD8-4D99-8A2F-4222A4273416}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA87187F-FCD8-4D99-8A2F-4222A4273416}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA87187F-FCD8-4D99-8A2F-4222A4273416}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA87187F-FCD8-4D99-8A2F-4222A4273416}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
