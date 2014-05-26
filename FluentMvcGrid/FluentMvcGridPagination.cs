@@ -13,6 +13,7 @@ namespace FluentMvcGrid
         private PaginationSizing _paginationSizing = PaginationSizing.Normal;
         private bool _showIfEmpty = true;
         private int _totalCount;
+        private PaginationPosition _position = PaginationPosition.Bottom;
 
         public FluentMvcGridPagination Enabled(bool enabled)
         {
@@ -28,6 +29,12 @@ namespace FluentMvcGrid
         public FluentMvcGridPagination PageSize(int value)
         {
             _pageSize = value;
+            return this;
+        }
+
+        public FluentMvcGridPagination Position(PaginationPosition value)
+        {
+            _position = value;
             return this;
         }
 
