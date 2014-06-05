@@ -14,6 +14,7 @@ namespace FluentMvcGrid
         private string _headerText;
         private string _sortBy;
         private bool _sortable;
+        private string _name;
 
         public FluentMvcGridColumn<T> AddAttribute(string key, Func<T, object> expression)
         {
@@ -30,6 +31,12 @@ namespace FluentMvcGrid
         public FluentMvcGridColumn<T> SortBy(string value)
         {
             _sortBy = value;
+            return this;
+        }
+
+        public FluentMvcGridColumn<T> Name(string value)
+        {
+            _name = value;
             return this;
         }
 
@@ -66,6 +73,12 @@ namespace FluentMvcGrid
             if (!string.IsNullOrWhiteSpace(@class))
             {
                 td.AddCssClass(@class);
+            }
+            td.Attributes.Add("data-role", "column");
+            var name = !string.IsNullOrWhiteSpace(_name) ? _name : _sortBy;
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                td.Attributes.Add("data-column-name", name);
             }
             foreach (var attribute in _attributes)
             {
