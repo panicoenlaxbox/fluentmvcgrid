@@ -258,6 +258,7 @@ namespace FluentMvcGrid
                 {
                     tr.AddCssClass(rowClass);
                 }
+                tr.Attributes.Add("data-role", "row");
                 foreach (var column in _columns)
                 {
                     tr.InnerHtml += column.BuildContent(item, _configuration);
