@@ -196,6 +196,8 @@ Además de la configuración verbose, hay un shortcut para los mínimos datos re
 El único marcado que emite de forma fija el helper de la grilla es:
 
 - data-current-url="*currentUrl*" como atributo en el elemento *table*
+- data-role="row"
+- data-column-name="Name o SortBy"
 - data-role="footer"
 - data-role="pagination"
 
