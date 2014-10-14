@@ -10,7 +10,13 @@ namespace FluentMvcGrid
     {
         public static HtmlString GetDefaultPagination(int pageIndex, int totalCount, int pageSize, PaginationSizing paginationSizing, int numericLinksCount, bool paginationInfo, object htmlAttributes, BootstrapVersion bootstrapVersion)
         {
-            var pageCount = (int)Math.Ceiling((double)totalCount / pageSize);
+            return GetDefaultPagination(pageIndex, totalCount, pageSize, paginationSizing, numericLinksCount,
+                paginationInfo, htmlAttributes, bootstrapVersion, HttpContext.Current.Request.Url);
+        }
+
+        public static HtmlString GetDefaultPagination(int pageIndex, int totalCount, int pageSize, PaginationSizing paginationSizing, int numericLinksCount, bool paginationInfo, object htmlAttributes, BootstrapVersion bootstrapVersion, Uri currentUrl)
+        {
+            var pageCount = CalculatePageCount(pageSize, totalCount);
             if (pageCount == 1)
             {
                 return new HtmlString("");
@@ -59,14 +65,16 @@ namespace FluentMvcGrid
 
             var liClass = pageIndex == 1 ? "disabled" : "";
 
-            var parameters = HttpUtility.ParseQueryString(HttpContext.Current.Request.Url.Query);
+            var parameters = HttpUtility.ParseQueryString(currentUrl.Query);
 
             if (string.IsNullOrWhiteSpace(parameters["page"]))
             {
                 parameters.Add("page", "");
             }
             parameters["page"] = "1";
-            var path = HttpContext.Current.Request.Path;
+
+            var path = currentUrl.LocalPath;
+
             var url = path + "?" + parameters;
             ul.InnerHtml += GetPaginationItem("&laquo;", url, liClass, FluentMvcGridResources.First);
 
@@ -123,20 +131,25 @@ namespace FluentMvcGrid
 
         public static HtmlString GetPagerPagination(int pageIndex, int totalCount, int pageSize, bool alignedLinks, object htmlAttributes)
         {
-            var pageCount = (int)Math.Ceiling((double)totalCount / pageSize);
+            return GetPagerPagination(pageIndex, totalCount, pageSize, alignedLinks, htmlAttributes, HttpContext.Current.Request.Url);
+        }
+
+        public static HtmlString GetPagerPagination(int pageIndex, int totalCount, int pageSize, bool alignedLinks, object htmlAttributes, Uri currentUrl)
+        {
+            var pageCount = CalculatePageCount(pageSize, totalCount);
             if (pageCount == 1)
             {
                 return new HtmlString("");
             }
 
-            var parameters = HttpUtility.ParseQueryString(HttpContext.Current.Request.Url.Query);
+            var parameters = HttpUtility.ParseQueryString(currentUrl.Query);
 
             if (string.IsNullOrWhiteSpace(parameters["page"]))
             {
                 parameters.Add("page", "");
             }
 
-            var path = HttpContext.Current.Request.Path;
+            var path = currentUrl.LocalPath;
 
             //Previous
             var ul = new TagBuilder("ul");
@@ -191,6 +204,11 @@ namespace FluentMvcGrid
             ul.InnerHtml += GetPaginationItem(text, url, liClass, "");
 
             return new HtmlString(ul.ToString());
+        }
+
+        private static int CalculatePageCount(int pageSize, int totalCount)
+        {
+            return (int)Math.Ceiling((double)totalCount / pageSize);
         }
 
         private static string GetPaginationItem(string text, string url, string liClass, string title)

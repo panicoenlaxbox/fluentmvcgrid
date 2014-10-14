@@ -1,23 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Web;
 using System.Web.Mvc;
 
 namespace FluentMvcGrid
 {
     internal static class Utilities
     {
-        internal static bool IsNullOrWhiteSpace(object value)
+        internal static T EvalExpression<T>(Func<T> expression)
         {
-            if (value == null)
+            if (expression == null)
             {
-                return true;
+                return default (T);
             }
-            if (string.IsNullOrWhiteSpace(value.ToString()))
-            {
-                return true;
-            }
-            return false;
+            return expression();
         }
 
         internal static string EvalExpression<T>(Func<T, object> expression, T item)
@@ -48,6 +43,32 @@ namespace FluentMvcGrid
             return value.ToString();
         }
 
+        internal static string GetText(string text, WhiteSpace whiteSpace)
+        {
+            if (!string.IsNullOrEmpty(text))
+            {
+                return text;
+            }
+            if (whiteSpace == WhiteSpace.Nbsp)
+            {
+                return "&nbsp;";
+            }
+            return "";
+        }
+
+        internal static bool IsNullOrWhiteSpace(object value)
+        {
+            if (value == null)
+            {
+                return true;
+            }
+            if (string.IsNullOrWhiteSpace(value.ToString()))
+            {
+                return true;
+            }
+            return false;
+        }
+
         internal static void SetAttributes(TagBuilder tag, IEnumerable<Tuple<string, Func<dynamic, object>>> attributes)
         {
             foreach (var attribute in attributes)
@@ -60,19 +81,6 @@ namespace FluentMvcGrid
                     tag.MergeAttribute(key, value, true);
                 }
             }
-        }
-
-        internal static string GetText(string text, WhiteSpace whiteSpace)
-        {
-            if (!string.IsNullOrEmpty(text))
-            {
-                return text;
-            }
-            if (whiteSpace == WhiteSpace.Nbsp)
-            {
-                return "&nbsp;";
-            }
-            return "";
         }
     }
 }

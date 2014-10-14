@@ -1,4 +1,5 @@
 using System;
+using System.Web;
 
 namespace FluentMvcGrid
 {
@@ -11,9 +12,9 @@ namespace FluentMvcGrid
         private int _pageSize = 10;
         private bool _paginationInfo = true;
         private PaginationSizing _paginationSizing = PaginationSizing.Normal;
+        private PaginationPosition _position = PaginationPosition.Bottom;
         private bool _showIfEmpty = true;
         private int _totalCount;
-        private PaginationPosition _position = PaginationPosition.Bottom;
 
         public FluentMvcGridPagination Enabled(bool enabled)
         {
@@ -21,9 +22,28 @@ namespace FluentMvcGrid
             return this;
         }
 
-        internal bool GetEnabled()
+        public FluentMvcGridPagination HtmlAttributes(object value)
         {
-            return _enabled;
+            _htmlAttributes = value;
+            return this;
+        }
+
+        public FluentMvcGridPagination Info(bool value)
+        {
+            _paginationInfo = value;
+            return this;
+        }
+
+        public FluentMvcGridPagination NumericLinksCount(int value)
+        {
+            _numericLinksCount = value;
+            return this;
+        }
+
+        public FluentMvcGridPagination PageIndex(int value)
+        {
+            _pageIndex = value;
+            return this;
         }
 
         public FluentMvcGridPagination PageSize(int value)
@@ -38,15 +58,10 @@ namespace FluentMvcGrid
             return this;
         }
 
-        public FluentMvcGridPagination TotalCount(int value)
+        [Obsolete("Unused")]
+        public FluentMvcGridPagination ShowIfEmpty(bool value)
         {
-            _totalCount = value;
-            return this;
-        }
-
-        public FluentMvcGridPagination PageIndex(int value)
-        {
-            _pageIndex = value;
+            _showIfEmpty = value;
             return this;
         }
 
@@ -56,35 +71,21 @@ namespace FluentMvcGrid
             return this;
         }
 
-        [Obsolete("Unused")]
-        public FluentMvcGridPagination ShowIfEmpty(bool value)
+        public FluentMvcGridPagination TotalCount(int value)
         {
-            _showIfEmpty = value;
+            _totalCount = value;
             return this;
         }
 
-        public FluentMvcGridPagination NumericLinksCount(int value)
-        {
-            _numericLinksCount = value;
-            return this;
-        }
-
-        public FluentMvcGridPagination Info(bool value)
-        {
-            _paginationInfo = value;
-            return this;
-        }
-
-        public FluentMvcGridPagination HtmlAttributes(object value)
-        {
-            _htmlAttributes = value;
-            return this;
-        }
-
-        internal string Build(Configuration configuration)
+        internal string Build(Configuration configuration, Uri url)
         {
             return Pagination.GetDefaultPagination(_pageIndex, _totalCount, _pageSize, _paginationSizing,
-                    _numericLinksCount, _paginationInfo, _htmlAttributes, configuration.GetBootstrapVersion()).ToString();
+                    _numericLinksCount, _paginationInfo, _htmlAttributes, configuration.GetBootstrapVersion(), url).ToString();
+        }
+
+        internal bool GetEnabled()
+        {
+            return _enabled;
         }
     }
 }
