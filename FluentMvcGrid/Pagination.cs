@@ -104,7 +104,7 @@ namespace FluentMvcGrid
                 }
                 else
                 {
-                    url = "#";
+                    url = "";
                     ul.InnerHtml += GetPaginationItem(text, url, liClass, "");
                 }
             }
@@ -189,7 +189,7 @@ namespace FluentMvcGrid
             liClass = "";
             if (pageIndex + 1 > pageCount)
             {
-                url = "#";
+                url = "";
                 liClass = "disabled";
             }
             else
