@@ -71,7 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BootstrapVersion.cs" />
-    <Compile Include="ColumnDisplay.cs" />
+    <Compile Include="ColumnVisibility.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Pagination.cs" />
     <Compile Include="HtmlExtensions.cs" />
