@@ -10,23 +10,27 @@ namespace FluentMvcGrid
     {
         private readonly List<Tuple<string, Func<dynamic, object>>> _attributes = new List<Tuple<string, Func<dynamic, object>>>();
         private readonly List<FluentMvcGridColumn<T>> _columns = new List<FluentMvcGridColumn<T>>();
+        private readonly Configuration _configuration;
         private readonly List<FluentMvcGridFooterColumn> _footerColumns = new List<FluentMvcGridFooterColumn>();
-        private IEnumerable<T> _items;
         private readonly FluentMvcGridPagination _pagination = new FluentMvcGridPagination();
         private string _class;
         private Func<dynamic, object> _eof;
         private Func<dynamic, object> _htmlAfter;
         private Func<dynamic, object> _htmlBefore;
         private string _id;
+        private IEnumerable<T> _items;
         private Func<T, object> _rowClass;
         private bool _showHeadersIfEof;
-        private readonly Configuration _configuration;
+        private Uri _url;
 
         public FluentMvcGrid(IEnumerable<T> items)
         {
             _items = items;
             _configuration = new Configuration();
+            _url = HttpContext.Current.Request.Url;
         }
+
+        #region IHtmlString members
 
         public string ToHtmlString()
         {
@@ -34,64 +38,11 @@ namespace FluentMvcGrid
             return Build();
         }
 
-        [Obsolete("Use Configuration method")]
-        public FluentMvcGrid<T> Bootstrap(BootstrapVersion value)
-        {
-            _configuration.Bootstrap(value);
-            return this;
-        }
-
-        public FluentMvcGrid<T> Configuration(Action<Configuration> configuration)
-        {
-            configuration(_configuration);
-            return this;
-        }
+        #endregion
 
         public FluentMvcGrid<T> AddAttribute(string key, Func<dynamic, object> expression)
         {
             _attributes.Add(new Tuple<string, Func<dynamic, object>>(key, expression));
-            return this;
-        }
-
-        public FluentMvcGrid<T> Id(string value)
-        {
-            _id = value;
-            return this;
-        }
-
-        public FluentMvcGrid<T> Class(string value)
-        {
-            _class = value;
-            return this;
-        }
-
-        public FluentMvcGrid<T> RowClass(Func<T, object> expression)
-        {
-            _rowClass = expression;
-            return this;
-        }
-
-        public FluentMvcGrid<T> Eof(Func<dynamic, object> expression)
-        {
-            _eof = expression;
-            return this;
-        }
-
-        public FluentMvcGrid<T> HeadersIfEof(bool value)
-        {
-            _showHeadersIfEof = value;
-            return this;
-        }
-
-        public FluentMvcGrid<T> HtmlBefore(Func<dynamic, object> expression)
-        {
-            _htmlBefore = expression;
-            return this;
-        }
-
-        public FluentMvcGrid<T> HtmlAfter(Func<dynamic, object> expression)
-        {
-            _htmlAfter = expression;
             return this;
         }
 
@@ -143,6 +94,55 @@ namespace FluentMvcGrid
             return this;
         }
 
+        [Obsolete("Use Configuration method")]
+        public FluentMvcGrid<T> Bootstrap(BootstrapVersion value)
+        {
+            _configuration.Bootstrap(value);
+            return this;
+        }
+
+        public FluentMvcGrid<T> Class(string value)
+        {
+            _class = value;
+            return this;
+        }
+
+        public FluentMvcGrid<T> Configuration(Action<Configuration> configuration)
+        {
+            configuration(_configuration);
+            return this;
+        }
+
+        public FluentMvcGrid<T> Eof(Func<dynamic, object> expression)
+        {
+            _eof = expression;
+            return this;
+        }
+
+        public FluentMvcGrid<T> HeadersIfEof(bool value)
+        {
+            _showHeadersIfEof = value;
+            return this;
+        }
+
+        public FluentMvcGrid<T> HtmlAfter(Func<dynamic, object> expression)
+        {
+            _htmlAfter = expression;
+            return this;
+        }
+
+        public FluentMvcGrid<T> HtmlBefore(Func<dynamic, object> expression)
+        {
+            _htmlBefore = expression;
+            return this;
+        }
+
+        public FluentMvcGrid<T> Id(string value)
+        {
+            _id = value;
+            return this;
+        }
+
         public FluentMvcGrid<T> Pagination(int pageIndex, int pageSize, int totalCount)
         {
             _pagination.PageIndex(pageIndex).PageSize(pageSize).TotalCount(totalCount);
@@ -155,146 +155,22 @@ namespace FluentMvcGrid
             return this;
         }
 
-        private string GetCurrentUrl()
+        public FluentMvcGrid<T> RowClass(Func<T, object> expression)
         {
-            var parameters = HttpUtility.ParseQueryString(HttpContext.Current.Request.Url.Query);
-            if (string.IsNullOrWhiteSpace(parameters["page"]) && _items.Any())
-            {
-                parameters.Add("page", "1");
-            }
-            if (parameters.Keys.Count > 0)
-            {
-                return HttpContext.Current.Request.Path + "?" + parameters;
-            }
-            return HttpContext.Current.Request.Path;
+            _rowClass = expression;
+            return this;
         }
 
-        private void SetGeneralAttributes(TagBuilder table)
+        public override string ToString()
         {
-            if (!string.IsNullOrWhiteSpace(_id))
-            {
-                table.Attributes.Add("id", _id);
-            }
-            if (!string.IsNullOrWhiteSpace(_class))
-            {
-                if (_class.Split(new[] { ' ' }).All(p => p.ToLower() != "table"))
-                {
-                    _class = "table " + _class;
-                }
-                table.AddCssClass(_class);
-            }
-            else
-            {
-                table.AddCssClass("table");
-            }
-            table.Attributes.Add("data-current-url", GetCurrentUrl());
+            // Html.Raw
+            return Build();
         }
 
-        private void SetHeader(TagBuilder table)
+        public FluentMvcGrid<T> Url(Uri url)
         {
-            var thead = new TagBuilder("thead");
-            var tr = new TagBuilder("tr");
-            foreach (var column in _columns)
-            {
-                tr.InnerHtml += column.BuildHeader(_configuration);
-            }
-            thead.InnerHtml = tr.ToString();
-            table.InnerHtml += thead.ToString();
-        }
-
-        private void SetFooterColumns(TagBuilder tfoot)
-        {
-            if (_footerColumns.Any())
-            {
-                if (_footerColumns.Count == 1)
-                {
-                    var footerColumn = _footerColumns.First();
-                    if (footerColumn.GetColSpan() <= 1)
-                    {
-                        footerColumn.ColSpan(_columns.Count);
-                    }
-                }
-                var tr = new TagBuilder("tr");
-                tr.Attributes.Add("data-role", "footer");
-                var numberOfColSpan = 0;
-                foreach (var footerColumn in _footerColumns)
-                {
-                    numberOfColSpan += footerColumn.GetColSpan();
-                    tr.InnerHtml += footerColumn.Build(_configuration);
-                }
-                if (numberOfColSpan < _columns.Count)
-                {
-                    tr.InnerHtml += string.Format("<td colspan='{0}'></td>", _columns.Count - numberOfColSpan);
-                }
-                tfoot.InnerHtml += tr.ToString();
-            }
-        }
-
-        private void SetPagination(TagBuilder tfoot)
-        {
-            if (_pagination.GetEnabled())
-            {
-                var tr = new TagBuilder("tr");
-                tr.Attributes.Add("data-role", "pagination");
-                var td = new TagBuilder("td");
-                td.Attributes.Add("colspan", _columns.Count.ToString());
-                td.InnerHtml = _pagination.Build(_configuration);
-                if (!string.IsNullOrWhiteSpace(td.InnerHtml))
-                {
-                    tr.InnerHtml = td.ToString();
-                    tfoot.InnerHtml += tr.ToString();
-                }
-            }
-        }
-
-        private void SetContent(TagBuilder table)
-        {
-            var tbody = new TagBuilder("tbody");
-            foreach (var item in _items)
-            {
-                var tr = new TagBuilder("tr");
-                var rowClass = Utilities.EvalExpression(_rowClass, item);
-                if (!string.IsNullOrWhiteSpace(rowClass))
-                {
-                    tr.AddCssClass(rowClass);
-                }
-                tr.Attributes.Add("data-role", "row");
-                foreach (var column in _columns)
-                {
-                    tr.InnerHtml += column.BuildContent(item, _configuration);
-                }
-                tbody.InnerHtml += tr.ToString();
-            }
-            table.InnerHtml += tbody.ToString();
-        }
-
-        private void SetBodyWhenEof(TagBuilder table)
-        {
-            var eof = Utilities.EvalExpression(_eof, null);
-            if (!string.IsNullOrWhiteSpace(eof))
-            {
-                var tbody = new TagBuilder("tbody");
-                var tr = new TagBuilder("tr");
-                var td = new TagBuilder("td");
-                td.Attributes.Add("colspan", _columns.Count.ToString());
-                td.InnerHtml = eof;
-                tr.InnerHtml = td.ToString();
-                tbody.InnerHtml = tr.ToString();
-                table.InnerHtml += tbody.ToString();
-            }
-        }
-
-        private void SetFooter(TagBuilder table)
-        {
-            var tfoot = new TagBuilder("tfoot");
-
-            SetFooterColumns(tfoot);
-            SetPagination(tfoot);
-
-            if (!string.IsNullOrWhiteSpace(tfoot.InnerHtml))
-            {
-                table.InnerHtml += tfoot.ToString();
-            }
+            _url = url;
+            return this;
         }
 
         private string Build()
@@ -345,10 +221,146 @@ namespace FluentMvcGrid
             return table.ToString();
         }
 
-        public override string ToString()
+        private string GetCurrentUrl(Uri url)
         {
-            // Html.Raw
-            return Build();
+            var parameters = HttpUtility.ParseQueryString(url.Query);
+            if (string.IsNullOrWhiteSpace(parameters["page"]) && _items.Any())
+            {
+                parameters.Add("page", "1");
+            }
+            if (parameters.Keys.Count > 0)
+            {
+                return url.LocalPath + "?" + parameters;
+            }
+            return url.LocalPath;
+        }
+
+        private void SetBodyWhenEof(TagBuilder table)
+        {
+            var eof = Utilities.EvalExpression(_eof, null);
+            if (!string.IsNullOrWhiteSpace(eof))
+            {
+                var tbody = new TagBuilder("tbody");
+                var tr = new TagBuilder("tr");
+                var td = new TagBuilder("td");
+                td.Attributes.Add("colspan", _columns.Count.ToString());
+                td.InnerHtml = eof;
+                tr.InnerHtml = td.ToString();
+                tbody.InnerHtml = tr.ToString();
+                table.InnerHtml += tbody.ToString();
+            }
+        }
+
+        private void SetContent(TagBuilder table)
+        {
+            var tbody = new TagBuilder("tbody");
+            foreach (var item in _items)
+            {
+                var tr = new TagBuilder("tr");
+                var rowClass = Utilities.EvalExpression(_rowClass, item);
+                if (!string.IsNullOrWhiteSpace(rowClass))
+                {
+                    tr.AddCssClass(rowClass);
+                }
+                tr.Attributes.Add("data-role", "row");
+                foreach (var column in _columns)
+                {
+                    tr.InnerHtml += column.BuildContent(item, _configuration);
+                }
+                tbody.InnerHtml += tr.ToString();
+            }
+            table.InnerHtml += tbody.ToString();
+        }
+
+        private void SetFooter(TagBuilder table)
+        {
+            var tfoot = new TagBuilder("tfoot");
+
+            SetFooterColumns(tfoot);
+            SetPagination(tfoot);
+
+            if (!string.IsNullOrWhiteSpace(tfoot.InnerHtml))
+            {
+                table.InnerHtml += tfoot.ToString();
+            }
+        }
+
+        private void SetFooterColumns(TagBuilder tfoot)
+        {
+            if (_footerColumns.Any())
+            {
+                if (_footerColumns.Count == 1)
+                {
+                    var footerColumn = _footerColumns.First();
+                    if (footerColumn.GetColSpan() <= 1)
+                    {
+                        footerColumn.ColSpan(_columns.Count);
+                    }
+                }
+                var tr = new TagBuilder("tr");
+                tr.Attributes.Add("data-role", "footer");
+                var numberOfColSpan = 0;
+                foreach (var footerColumn in _footerColumns)
+                {
+                    numberOfColSpan += footerColumn.GetColSpan();
+                    tr.InnerHtml += footerColumn.Build(_configuration);
+                }
+                if (numberOfColSpan < _columns.Count)
+                {
+                    tr.InnerHtml += string.Format("<td colspan='{0}'></td>", _columns.Count - numberOfColSpan);
+                }
+                tfoot.InnerHtml += tr.ToString();
+            }
+        }
+
+        private void SetGeneralAttributes(TagBuilder table)
+        {
+            if (!string.IsNullOrWhiteSpace(_id))
+            {
+                table.Attributes.Add("id", _id);
+            }
+            if (!string.IsNullOrWhiteSpace(_class))
+            {
+                if (_class.Split(new[] { ' ' }).All(p => p.ToLower() != "table"))
+                {
+                    _class = "table " + _class;
+                }
+                table.AddCssClass(_class);
+            }
+            else
+            {
+                table.AddCssClass("table");
+            }
+            table.Attributes.Add("data-current-url", GetCurrentUrl(_url));
+        }
+
+        private void SetHeader(TagBuilder table)
+        {
+            var thead = new TagBuilder("thead");
+            var tr = new TagBuilder("tr");
+            foreach (var column in _columns)
+            {
+                tr.InnerHtml += column.BuildHeader(_configuration, _url);
+            }
+            thead.InnerHtml = tr.ToString();
+            table.InnerHtml += thead.ToString();
+        }
+
+        private void SetPagination(TagBuilder tfoot)
+        {
+            if (_pagination.GetEnabled())
+            {
+                var tr = new TagBuilder("tr");
+                tr.Attributes.Add("data-role", "pagination");
+                var td = new TagBuilder("td");
+                td.Attributes.Add("colspan", _columns.Count.ToString());
+                td.InnerHtml = _pagination.Build(_configuration, _url);
+                if (!string.IsNullOrWhiteSpace(td.InnerHtml))
+                {
+                    tr.InnerHtml = td.ToString();
+                    tfoot.InnerHtml += tr.ToString();
+                }
+            }
         }
     }
 }
