@@ -93,6 +93,8 @@ La diferencia en AddAttribute entre FluentMvcGrid y FluentMvcGridColumn, es que 
 
 También cabe mencionar que AddAttribute reemplazará cualquier atributo asignado previamente con el que coincida, esto es que prevalecerá frente a los métodos Class o Id, claro está en el caso de agregar un atributo con la clave class o id.
 
+Para casos excepcionales, se ha añadido la propiedad Url (del tipo Uri) que servirá para crear la paginación a partir del dato suministrado en vez desde *HttpContext.Current.Request.Url*.
+
 ## FluentMvcGridColumn ##
 
 Una columna tiene los siguentes métodos directos (un tipo básico):
@@ -112,6 +114,7 @@ Otros métodos que habilitan la escritura de Razor templates o lambdas a nivel d
 - Class
 - Format
 - AddAttribute
+- Visibility
 
 El método más importante es Format que es quien escribe el dato en la celda:
 
