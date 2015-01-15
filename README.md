@@ -145,7 +145,7 @@ Tanto el contenido de la celda como el número de celdas que agrupara (colspan) 
 
     .AddFooterColumn(footerColumn => footerColumn.ColSpan(3).Format(@<text>Pie</text>))
 
-Si sólo agregamos una celda al pie y el valor de ColSpan es distinto de 1 (valor predeterminado), el valor de ColSpan será calculado automáticamente al número de columnas que tenga la grilla. Una pequeña ayuda, sólo eso.
+Si sólo agregamos una celda al pie y no especificamos ningún valor a ColSpan, el valor de ColSpan será calculado automáticamente al número de columnas que tenga la grilla. Una pequeña ayuda, sólo eso.
 
 Al igual que FluentMvcGrid, también tenemos disponible el método AddAttribute que recibe un parámetro dynamic con el valor null (no hay fila sobre la que iterar).
 

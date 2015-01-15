@@ -6,14 +6,28 @@ namespace FluentMvcGrid
 {
     public class FluentMvcGridFooterColumn
     {
-        private readonly List<Tuple<string, Func<dynamic, object>>> _attributes = new List<Tuple<string, Func<dynamic, object>>>();
-        private int _colSpan = 1;
-        private Func<dynamic, object> _format;
+        private readonly List<Tuple<string, Func<dynamic, object>>> _attributes;
         private String _class;
+        private int _colSpan;
+        private Func<dynamic, object> _format;
+        private Func<ColumnVisibility> _visibility;
 
-        public FluentMvcGridFooterColumn Format(Func<dynamic, object> expression)
+        public FluentMvcGridFooterColumn()
         {
-            _format = expression;
+            _attributes = new List<Tuple<string, Func<dynamic, object>>>();
+            _colSpan = 1;
+            _visibility = (() => ColumnVisibility.Visible);
+        }
+
+        public FluentMvcGridFooterColumn AddAttribute(string key, Func<dynamic, object> expression)
+        {
+            _attributes.Add(new Tuple<string, Func<dynamic, object>>(key, expression));
+            return this;
+        }
+
+        public FluentMvcGridFooterColumn Class(string value)
+        {
+            _class = value;
             return this;
         }
 
@@ -23,25 +37,25 @@ namespace FluentMvcGrid
             return this;
         }
 
-        public FluentMvcGridFooterColumn Class(string value)
+        public FluentMvcGridFooterColumn Format(Func<dynamic, object> expression)
         {
-            _class = value;
+            _format = expression;
             return this;
         }
-        
-        internal int GetColSpan()
-        {
-            return _colSpan;
-        }
 
-        public FluentMvcGridFooterColumn AddAttribute(string key, Func<dynamic, object> expression)
+        public FluentMvcGridFooterColumn Visibility(Func<ColumnVisibility> expression)
         {
-            _attributes.Add(new Tuple<string, Func<dynamic, object>>(key, expression));
+            _visibility = expression;
             return this;
         }
 
         internal string Build(Configuration configuration)
         {
+            var visibility = Utilities.EvalExpression(_visibility);
+            if (visibility == ColumnVisibility.None)
+            {
+                return string.Empty;
+            }
             var td = new TagBuilder("td");
             if (_colSpan > 1)
             {
@@ -53,8 +67,27 @@ namespace FluentMvcGrid
             {
                 td.AddCssClass(_class);
             }
-            Utilities.SetAttributes(td, _attributes);            
+            Utilities.SetAttributes(td, _attributes);
+            if (visibility == ColumnVisibility.Hidden)
+            {
+                td.Attributes.Add("style", "display: none;");
+            }       
             return td.ToString();
+        }
+
+        internal int GetColSpan()
+        {
+            return _colSpan;
+        }
+
+        internal ColumnVisibility GetVisibility()
+        {
+            return _visibility();
+        }
+
+        internal bool IsRendered()
+        {
+            return _visibility() != ColumnVisibility.None;
         }
     }
 }

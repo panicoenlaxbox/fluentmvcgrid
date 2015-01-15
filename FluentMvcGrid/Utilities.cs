@@ -10,7 +10,7 @@ namespace FluentMvcGrid
         {
             if (expression == null)
             {
-                return default (T);
+                return default(T);
             }
             return expression();
         }
@@ -43,17 +43,9 @@ namespace FluentMvcGrid
             return value.ToString();
         }
 
-        internal static string GetText(string text, WhiteSpace whiteSpace)
+        internal static string GetText(string value, WhiteSpace whiteSpace)
         {
-            if (!string.IsNullOrEmpty(text))
-            {
-                return text;
-            }
-            if (whiteSpace == WhiteSpace.Nbsp)
-            {
-                return "&nbsp;";
-            }
-            return "";
+            return GetTextOrDefault(value, whiteSpace == WhiteSpace.Nbsp ? "&nbsp;" : "");
         }
 
         internal static bool IsNullOrWhiteSpace(object value)
@@ -81,6 +73,15 @@ namespace FluentMvcGrid
                     tag.MergeAttribute(key, value, true);
                 }
             }
+        }
+
+        private static string GetTextOrDefault(string value, string defaultValue)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                return value;
+            }
+            return defaultValue;
         }
     }
 }
