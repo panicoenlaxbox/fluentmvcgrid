@@ -7,19 +7,20 @@ namespace FluentMvcGrid
 {
     public class FluentMvcGridColumn<T>
     {
-        private readonly List<Tuple<string, Func<T, object>>> _attributes = new List<Tuple<string, Func<T, object>>>();
+        private readonly List<Tuple<string, Func<T, object>>> _attributes;
         private Func<T, object> _class;
-        private Func<ColumnVisibility> _display;
         private Func<T, object> _format;
         private Func<string> _headerClass;
         private string _headerText;
         private string _name;
         private string _sortBy;
         private bool _sortable;
+        private Func<ColumnVisibility> _visibility;
 
         public FluentMvcGridColumn()
         {
-            _display = (() => ColumnVisibility.Visible);
+            _attributes = new List<Tuple<string, Func<T, object>>>();
+            _visibility = (() => ColumnVisibility.Visible);
         }
 
         public FluentMvcGridColumn<T> AddAttribute(string key, Func<T, object> expression)
@@ -31,12 +32,6 @@ namespace FluentMvcGrid
         public FluentMvcGridColumn<T> Class(Func<T, object> expression)
         {
             _class = expression;
-            return this;
-        }
-
-        public FluentMvcGridColumn<T> Visibility(Func<ColumnVisibility> expression)
-        {
-            _display = expression;
             return this;
         }
 
@@ -76,15 +71,21 @@ namespace FluentMvcGrid
             return this;
         }
 
+        public FluentMvcGridColumn<T> Visibility(Func<ColumnVisibility> expression)
+        {
+            _visibility = expression;
+            return this;
+        }
+
         internal string BuildContent(T item, Configuration configuration)
         {
-            var td = new TagBuilder("td");
-            var display = Utilities.EvalExpression(_display);
-            if (display == ColumnVisibility.None)
+            var visibility = Utilities.EvalExpression(_visibility);
+            if (visibility == ColumnVisibility.None)
             {
                 return string.Empty;
             }
             var format = Utilities.EvalExpression(_format, item);
+            var td = new TagBuilder("td");
             td.InnerHtml = Utilities.GetText(format, configuration.GetWhiteSpace());
             var @class = Utilities.EvalExpression(_class, item);
             if (!string.IsNullOrWhiteSpace(@class))
@@ -107,27 +108,24 @@ namespace FluentMvcGrid
                     td.MergeAttribute(key, value, true);
                 }
             }
-            if (display == ColumnVisibility.Hidden)
+            if (visibility == ColumnVisibility.Hidden)
             {
                 td.Attributes.Add("style", "display: none;");
             }
             return td.ToString();
         }
 
-        internal string BuildHeader(Configuration configuration, Uri url)
+        internal string BuildHeader(Uri url, Configuration configuration)
         {
             var th = new TagBuilder("th");
-            var display = Utilities.EvalExpression(_display);
-            if (display == ColumnVisibility.None)
+            var visibility = Utilities.EvalExpression(_visibility);
+            if (visibility == ColumnVisibility.None)
             {
                 return string.Empty;
             }
             if (_sortable)
             {
-                var a = new TagBuilder("a")
-                {
-                    InnerHtml = _headerText
-                };
+                var a = new TagBuilder("a") { InnerHtml = _headerText };
                 var parameters = HttpUtility.ParseQueryString(url.Query);
                 parameters.Remove("page");
                 var sort = parameters["sort"];
@@ -152,11 +150,16 @@ namespace FluentMvcGrid
             {
                 th.AddCssClass(headerClass);
             }
-            if (display == ColumnVisibility.Hidden)
+            if (visibility == ColumnVisibility.Hidden)
             {
                 th.Attributes.Add("style", "display: none;");
             }
             return th.ToString();
+        }
+        
+        internal ColumnVisibility GetVisibility()
+        {
+            return _visibility();
         }
     }
 }

@@ -6,15 +6,32 @@
 @{
     ViewBag.Title = "Index";
 }
-
-@(Html.FluentMvcGrid(Model.Data)
+@**@
+    @(Html.FluentMvcGrid(Model.Data)
       .Class("table table-striped table-hover table-bordered")
-      .Configuration(configuration => configuration.Bootstrap(BootstrapVersion.Bootstrap3).WhiteSpace(WhiteSpace.Nbsp))
-      .AddColumn(column => column.Format(item => item.FirstName).HeaderText("Nombre").Sortable(true).SortBy("FirstName"))
-      .AddColumn(column => column.Format(item => item.LastName).HeaderText("Apellidos").Sortable(true).SortBy("LastName").Name("LastName2"))
-      .AddColumn(column => column.Format(item => item.Age).HeaderText("Edad").Name("Age").Visibility(() => ColumnVisibility.Hidden))
-      .AddColumn(column => column.Format(item => item.Gender == Gender.Male ? "Hombre" : "Mujer").HeaderText("Género"))
-      .AddColumn(column => column.Format(@<text>@string.Format("{0:d}", item.Birthday)</text>).HeaderText("Cumpleaños"))
-      .Pagination(pagination => pagination.PageIndex(Model.PageIndex).TotalCount(Model.TotalCount))
+      .Configuration(cfg => cfg
+          .BootstrapVersion(BootstrapVersion.Bootstrap3)
+          .WhiteSpace(WhiteSpace.Nbsp))
+      .AddColumn(c => c
+          .Format(item => item.FirstName)
+          .HeaderText("Nombre")
+          .Sortable(true)
+          .SortBy("FirstName")
+          .Visibility(() => ColumnVisibility.Hidden))
+      .AddColumn(c => c
+          .Format(item => item.LastName)
+          .HeaderText("Apellidos")
+          .Sortable(true)
+          .SortBy("LastName")
+          .Name("LastName2"))
+      .AddColumn("Edad", item => item.Age)
+      .AddColumn(c => c.Format(item => item.Gender == Gender.Male ? "Hombre" : "Mujer").HeaderText("Género"))
+      .AddColumn(c => c.Format(@<text>@(string.Format("{0:d}", item.Birthday))</text>).HeaderText("Cumpleaños"))
+      .AddFooterColumn(fc => fc.Format(item=> "footer1"))
+      .AddFooterColumn(fc => fc.Format(item => "footer2").Visibility(() => ColumnVisibility.Hidden))
+      .AddFooterColumn(fc => fc.Format(item => "footer3"))
+      .Pagination(pagination => pagination
+          .PageIndex(Model.PageIndex)
+          .TotalCount(Model.TotalCount))
       .Eof(@<p>No hay registros que mostrar</p>)
-                                              .HeadersIfEof(true))
+      .HeadersIfEof(true))

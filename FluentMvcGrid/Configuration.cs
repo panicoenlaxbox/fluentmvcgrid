@@ -7,25 +7,25 @@ namespace FluentMvcGrid
 
         public Configuration()
         {
-            _bootstrapVersion = BootstrapVersion.Bootstrap3;
+            _bootstrapVersion = FluentMvcGrid.BootstrapVersion.Bootstrap3;
             _whiteSpace = FluentMvcGrid.WhiteSpace.None;
         }
 
-        public Configuration Bootstrap(BootstrapVersion value)
+        public Configuration BootstrapVersion(BootstrapVersion value)
         {
             _bootstrapVersion = value;
             return this;
-        }
-
-        internal BootstrapVersion GetBootstrapVersion()
-        {
-            return _bootstrapVersion;
         }
 
         public Configuration WhiteSpace(WhiteSpace value)
         {
             _whiteSpace = value;
             return this;
+        }
+
+        internal BootstrapVersion GetBootstrapVersion()
+        {
+            return _bootstrapVersion;
         }
 
         internal WhiteSpace GetWhiteSpace()

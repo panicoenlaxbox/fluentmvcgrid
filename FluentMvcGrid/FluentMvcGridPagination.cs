@@ -1,30 +1,41 @@
 using System;
-using System.Web;
 
 namespace FluentMvcGrid
 {
     public class FluentMvcGridPagination
     {
+        private object _attributes;
         private bool _enabled = true;
-        private object _htmlAttributes;
-        private int _numericLinksCount = 5;
-        private int _pageIndex = 1;
-        private int _pageSize = 10;
-        private bool _paginationInfo = true;
-        private PaginationSizing _paginationSizing = PaginationSizing.Normal;
-        private PaginationPosition _position = PaginationPosition.Bottom;
-        private bool _showIfEmpty = true;
+        private int _numericLinksCount;
+        private int _pageIndex;
+        private int _pageSize;
+        private bool _paginationInfo;
+        private PaginationSizing _paginationSizing;
+        private PaginationPosition _position;
+        private bool _showIfEmpty;
         private int _totalCount;
 
-        public FluentMvcGridPagination Enabled(bool enabled)
+        public FluentMvcGridPagination()
         {
-            _enabled = enabled;
+            _enabled = true;
+            _numericLinksCount = 5;
+            _pageIndex = 1;
+            _pageSize = 10;
+            _paginationInfo = true;
+            _paginationSizing = PaginationSizing.Normal;
+            _position = PaginationPosition.Bottom;
+            _showIfEmpty = true;
+        }
+
+        public FluentMvcGridPagination Attributes(object value)
+        {
+            _attributes = value;
             return this;
         }
 
-        public FluentMvcGridPagination HtmlAttributes(object value)
+        public FluentMvcGridPagination Enabled(bool value)
         {
-            _htmlAttributes = value;
+            _enabled = value;
             return this;
         }
 
@@ -58,13 +69,6 @@ namespace FluentMvcGrid
             return this;
         }
 
-        [Obsolete("Unused")]
-        public FluentMvcGridPagination ShowIfEmpty(bool value)
-        {
-            _showIfEmpty = value;
-            return this;
-        }
-
         public FluentMvcGridPagination Sizing(PaginationSizing value)
         {
             _paginationSizing = value;
@@ -80,7 +84,7 @@ namespace FluentMvcGrid
         internal string Build(Configuration configuration, Uri url)
         {
             return Pagination.GetDefaultPagination(_pageIndex, _totalCount, _pageSize, _paginationSizing,
-                    _numericLinksCount, _paginationInfo, _htmlAttributes, configuration.GetBootstrapVersion(), url).ToString();
+                    _numericLinksCount, _paginationInfo, _attributes, configuration.GetBootstrapVersion(), url).ToString();
         }
 
         internal bool GetEnabled()
