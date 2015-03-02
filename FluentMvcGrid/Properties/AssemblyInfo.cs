@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("FluentGrid")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("FluentMvcGrid")]
+[assembly: AssemblyDescription("ASP.NET MVC grid with fluent API")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("FluentGrid")]
+[assembly: AssemblyCompany("panicoenlaxbox")]
+[assembly: AssemblyProduct("FluentMvcGrid")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
