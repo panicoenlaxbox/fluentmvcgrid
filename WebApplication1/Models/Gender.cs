@@ -1,4 +1,4 @@
-﻿namespace FluentMvcGridExample.Models
+﻿namespace WebApplication1.Models
 {
     public enum Gender
     {

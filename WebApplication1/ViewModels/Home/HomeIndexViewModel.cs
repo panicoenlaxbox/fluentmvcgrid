@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using FluentMvcGridExample.Models;
+using WebApplication1.Models;
 
-namespace FluentMvcGridExample.ViewModels.Home
+namespace WebApplication1.ViewModels.Home
 {
     public class HomeIndexViewModel
     {
