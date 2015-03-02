@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FluentMvcGridExample.Models
+namespace WebApplication1.Models
 {
     public class Person
     {

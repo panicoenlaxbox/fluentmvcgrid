@@ -2,11 +2,11 @@
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
-using FluentMvcGridExample.Models;
-using FluentMvcGridExample.ViewModels.Home;
+using WebApplication1.Models;
+using WebApplication1.ViewModels.Home;
 using Newtonsoft.Json;
 
-namespace FluentMvcGridExample.Controllers
+namespace WebApplication1.Controllers
 {
     public class HomeController : Controller
     {
