@@ -6,8 +6,8 @@
 @{
     ViewBag.Title = "Index";
 }
-@**@
-    @(Html.FluentMvcGrid(Model.Data)
+
+@(Html.FluentMvcGrid(Model.Data)
       .Class("table table-striped table-hover table-bordered")
       .Configuration(cfg => cfg
           .BootstrapVersion(BootstrapVersion.Bootstrap3)
@@ -16,8 +16,9 @@
           .Format(item => item.FirstName)
           .HeaderText("Nombre")
           .Sortable(true)
+          .OnSort("sort")
           .SortBy("FirstName")
-          .Visibility(() => ColumnVisibility.Hidden))
+          .Visibility(() => ColumnVisibility.Visible))
       .AddColumn(c => c
           .Format(item => item.LastName)
           .HeaderText("Apellidos")
@@ -27,11 +28,25 @@
       .AddColumn("Edad", item => item.Age)
       .AddColumn(c => c.Format(item => item.Gender == Gender.Male ? "Hombre" : "Mujer").HeaderText("Género"))
       .AddColumn(c => c.Format(@<text>@(string.Format("{0:d}", item.Birthday))</text>).HeaderText("Cumpleaños"))
-      .AddFooterColumn(fc => fc.Format(item=> "footer1"))
+      .AddFooterColumn(fc => fc.Format(item => "footer1"))
       .AddFooterColumn(fc => fc.Format(item => "footer2").Visibility(() => ColumnVisibility.Hidden))
       .AddFooterColumn(fc => fc.Format(item => "footer3"))
       .Pagination(pagination => pagination
           .PageIndex(Model.PageIndex)
-          .TotalCount(Model.TotalCount))
+          .TotalCount(Model.TotalCount)
+          .OnPaginate("paginate"))
       .Eof(@<p>No hay registros que mostrar</p>)
-      .HeadersIfEof(true))
+      .Url(new Uri("http://localhost:36513/Home/Index?sergio=león&sergio=panicoenlaxbox&carmen=olivas"))
+          .HeadersIfEof(true))
+
+<script>
+    function sort(url, sortBy, sortDir) {
+        console.log(url);
+        console.log(sortBy);
+        console.log(sortDir);
+    }
+    function paginate(url, page) {
+        console.log(url);
+        console.log(page);
+    }
+</script>

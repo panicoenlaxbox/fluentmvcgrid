@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Web;
 using System.Web.Mvc;
 
@@ -16,6 +17,7 @@ namespace FluentMvcGrid
         private string _sortBy;
         private bool _sortable;
         private Func<ColumnVisibility> _visibility;
+        private string _onSort;
 
         public FluentMvcGridColumn()
         {
@@ -53,6 +55,12 @@ namespace FluentMvcGrid
             return this;
         }
 
+        public FluentMvcGridColumn<T> OnSort(string value)
+        {
+            _onSort = value;
+            return this;
+        }
+
         public FluentMvcGridColumn<T> Name(string value)
         {
             _name = value;
@@ -85,8 +93,10 @@ namespace FluentMvcGrid
                 return string.Empty;
             }
             var format = Utilities.EvalExpression(_format, item);
-            var td = new TagBuilder("td");
-            td.InnerHtml = Utilities.GetText(format, configuration.GetWhiteSpace());
+            var td = new TagBuilder("td")
+            {
+                InnerHtml = Utilities.GetText(format, configuration.GetWhiteSpace())
+            };
             var @class = Utilities.EvalExpression(_class, item);
             if (!string.IsNullOrWhiteSpace(@class))
             {
@@ -115,6 +125,30 @@ namespace FluentMvcGrid
             return td.ToString();
         }
 
+        private static NameValueCollection ParseQueryString(string query)
+        {
+            var nameValueCollection = CreateHttpValueCollection();
+            var parameters = query.Split('&');
+            foreach (var parameter in parameters)
+            {
+                var parts = parameter.Split('=');
+                if (parts.Length > 0)
+                {
+                    var name = HttpUtility.UrlDecode(parts[0].Trim('?', ' '));
+                    var value = HttpUtility.UrlDecode(parts[1].Trim());
+                    nameValueCollection.Add(name, value);
+                }
+            }
+            return nameValueCollection;
+        }
+
+        private static NameValueCollection CreateHttpValueCollection()
+        {
+            // HttpValueCollection is a internal class
+            NameValueCollection nameValueCollection = HttpUtility.ParseQueryString("?");
+            return nameValueCollection;
+        }
+
         internal string BuildHeader(Uri url, Configuration configuration)
         {
             var th = new TagBuilder("th");
@@ -125,8 +159,12 @@ namespace FluentMvcGrid
             }
             if (_sortable)
             {
-                var a = new TagBuilder("a") { InnerHtml = _headerText };
-                var parameters = HttpUtility.ParseQueryString(url.Query);
+                var a = new TagBuilder("a")
+                {
+                    InnerHtml = _headerText
+                };
+                NameValueCollection parameters = HttpUtility.ParseQueryString(url.Query);
+
                 parameters.Remove("page");
                 var sort = parameters["sort"];
                 var sortDir = "ASC";
@@ -139,6 +177,11 @@ namespace FluentMvcGrid
                 parameters["sortdir"] = sortDir;
                 var href = url.LocalPath + "?" + parameters;
                 a.Attributes.Add("href", href);
+                if (!string.IsNullOrEmpty(_onSort))
+                {
+                    var onClick = string.Format("javascript:{0}(\"{1}\",\"{2}\",\"{3}\");return false;", _onSort, href, _sortBy, sortDir);
+                    a.Attributes.Add("onclick", onClick);
+                }
                 th.InnerHtml = a.ToString();
             }
             else
@@ -156,7 +199,7 @@ namespace FluentMvcGrid
             }
             return th.ToString();
         }
-        
+
         internal ColumnVisibility GetVisibility()
         {
             return _visibility();
