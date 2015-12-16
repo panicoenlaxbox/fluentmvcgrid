@@ -5,15 +5,15 @@ namespace FluentMvcGrid
     public class FluentMvcGridPagination
     {
         private object _attributes;
-        private bool _enabled = true;
+        private bool _enabled;
         private int _numericLinksCount;
         private int _pageIndex;
         private int _pageSize;
         private bool _paginationInfo;
         private PaginationSizing _paginationSizing;
-        private PaginationPosition _position;
-        private bool _showIfEmpty;
+        private PaginationAligment _paginationAligment;
         private int _totalCount;
+        private string _onPaginate;
 
         public FluentMvcGridPagination()
         {
@@ -23,8 +23,7 @@ namespace FluentMvcGrid
             _pageSize = 10;
             _paginationInfo = true;
             _paginationSizing = PaginationSizing.Normal;
-            _position = PaginationPosition.Bottom;
-            _showIfEmpty = true;
+            _paginationAligment = PaginationAligment.Left;
         }
 
         public FluentMvcGridPagination Attributes(object value)
@@ -63,15 +62,21 @@ namespace FluentMvcGrid
             return this;
         }
 
-        public FluentMvcGridPagination Position(PaginationPosition value)
-        {
-            _position = value;
-            return this;
-        }
-
         public FluentMvcGridPagination Sizing(PaginationSizing value)
         {
             _paginationSizing = value;
+            return this;
+        }
+
+        public FluentMvcGridPagination OnPaginate(string value)
+        {
+            _onPaginate = value;
+            return this;
+        }
+
+        public FluentMvcGridPagination Aligment(PaginationAligment value)
+        {
+            _paginationAligment = value;
             return this;
         }
 
@@ -83,8 +88,8 @@ namespace FluentMvcGrid
 
         internal string Build(Configuration configuration, Uri url)
         {
-            return Pagination.GetDefaultPagination(_pageIndex, _totalCount, _pageSize, _paginationSizing,
-                    _numericLinksCount, _paginationInfo, _attributes, configuration.GetBootstrapVersion(), url).ToString();
+            return Pagination.GetDefaultPagination(_pageIndex, _totalCount, _pageSize, _paginationSizing, _paginationAligment,
+                    _numericLinksCount, _paginationInfo, _attributes, configuration.GetBootstrapVersion(), _onPaginate, url).ToString();
         }
 
         internal bool GetEnabled()

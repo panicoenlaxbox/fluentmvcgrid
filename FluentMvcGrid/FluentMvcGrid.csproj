@@ -79,8 +79,8 @@
     <Compile Include="FluentMvcGridColumn.cs" />
     <Compile Include="FluentMvcGridFooterColumn.cs" />
     <Compile Include="FluentMvcGridPagination.cs" />
+    <Compile Include="PaginationAligment.cs" />
     <Compile Include="PaginationExtensions.cs" />
-    <Compile Include="PaginationPosition.cs" />
     <Compile Include="PaginationSizing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FluentMvcGridResources.cs" />

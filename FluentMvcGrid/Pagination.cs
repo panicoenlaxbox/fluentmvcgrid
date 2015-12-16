@@ -8,13 +8,13 @@ namespace FluentMvcGrid
 {
     internal static class Pagination
     {
-        public static HtmlString GetDefaultPagination(int pageIndex, int totalCount, int pageSize, PaginationSizing paginationSizing, int numericLinksCount, bool paginationInfo, object htmlAttributes, BootstrapVersion bootstrapVersion)
+        public static HtmlString GetDefaultPagination(int pageIndex, int totalCount, int pageSize, PaginationSizing paginationSizing, PaginationAligment paginationAligment, int numericLinksCount, bool paginationInfo, object htmlAttributes, BootstrapVersion bootstrapVersion, string onClick)
         {
-            return GetDefaultPagination(pageIndex, totalCount, pageSize, paginationSizing, numericLinksCount,
-                paginationInfo, htmlAttributes, bootstrapVersion, HttpContext.Current.Request.Url);
+            return GetDefaultPagination(pageIndex, totalCount, pageSize, paginationSizing, paginationAligment, numericLinksCount,
+                paginationInfo, htmlAttributes, bootstrapVersion, onClick, HttpContext.Current.Request.Url);
         }
 
-        public static HtmlString GetDefaultPagination(int pageIndex, int totalCount, int pageSize, PaginationSizing paginationSizing, int numericLinksCount, bool paginationInfo, object htmlAttributes, BootstrapVersion bootstrapVersion, Uri currentUrl)
+        public static HtmlString GetDefaultPagination(int pageIndex, int totalCount, int pageSize, PaginationSizing paginationSizing, PaginationAligment paginationAligment, int numericLinksCount, bool paginationInfo, object htmlAttributes, BootstrapVersion bootstrapVersion, string onClick, Uri currentUrl)
         {
             var pageCount = CalculatePageCount(pageSize, totalCount);
             if (pageCount == 1)
@@ -24,11 +24,15 @@ namespace FluentMvcGrid
 
             var div = new TagBuilder("div");
             var ul = new TagBuilder("ul");
-            TagBuilder parentTag = null;
+            TagBuilder parentTag;
 
             if (bootstrapVersion == BootstrapVersion.Bootstrap2)
             {
                 div.AddCssClass("pagination");
+                if (paginationAligment != PaginationAligment.Left)
+                {
+                    div.AddCssClass(paginationAligment == PaginationAligment.Center ? "pagination-centered" : "pagination-right");
+                }
                 parentTag = div;
             }
             else
@@ -71,12 +75,13 @@ namespace FluentMvcGrid
             {
                 parameters.Add("page", "");
             }
-            parameters["page"] = "1";
+            var page = 1;
+            parameters["page"] = page.ToString();
 
             var path = currentUrl.LocalPath;
 
             var url = path + "?" + parameters;
-            ul.InnerHtml += GetPaginationItem("&laquo;", url, liClass, FluentMvcGridResources.First);
+            ul.InnerHtml += GetPaginationItem("&laquo;", url, liClass, FluentMvcGridResources.First, onClick, page);
 
             var num = pageCount - 1;
             var num1 = pageIndex + numericLinksCount / 2;
@@ -98,21 +103,23 @@ namespace FluentMvcGrid
                 liClass = pageIndex == j ? "active" : "";
                 if (j != pageIndex)
                 {
-                    parameters["page"] = j.ToString(CultureInfo.InvariantCulture);
+                    page = j;
+                    parameters["page"] = page.ToString();
                     url = path + "?" + parameters;
-                    ul.InnerHtml += GetPaginationItem(text, url, liClass, "");
+                    ul.InnerHtml += GetPaginationItem(text, url, liClass, null, onClick, page);
                 }
                 else
                 {
                     url = "";
-                    ul.InnerHtml += GetPaginationItem(text, url, liClass, "");
+                    ul.InnerHtml += GetPaginationItem(text, url, liClass, null, onClick, null);
                 }
             }
 
             liClass = pageIndex == pageCount ? "disabled" : "";
-            parameters["page"] = pageCount.ToString(CultureInfo.InvariantCulture);
+            page = pageCount;
+            parameters["page"] = page.ToString();
             url = path + "?" + parameters;
-            ul.InnerHtml += GetPaginationItem("&raquo;", url, liClass, FluentMvcGridResources.Last);
+            ul.InnerHtml += GetPaginationItem("&raquo;", url, liClass, FluentMvcGridResources.Last, onClick, page);
 
             if (paginationInfo)
             {
@@ -129,12 +136,12 @@ namespace FluentMvcGrid
             return new HtmlString(ul.ToString());
         }
 
-        public static HtmlString GetPagerPagination(int pageIndex, int totalCount, int pageSize, bool alignedLinks, object htmlAttributes)
+        public static HtmlString GetPagerPagination(int pageIndex, int totalCount, int pageSize, bool alignedLinks, object htmlAttributes, string onClick)
         {
-            return GetPagerPagination(pageIndex, totalCount, pageSize, alignedLinks, htmlAttributes, HttpContext.Current.Request.Url);
+            return GetPagerPagination(pageIndex, totalCount, pageSize, alignedLinks, htmlAttributes, onClick, HttpContext.Current.Request.Url);
         }
 
-        public static HtmlString GetPagerPagination(int pageIndex, int totalCount, int pageSize, bool alignedLinks, object htmlAttributes, Uri currentUrl)
+        public static HtmlString GetPagerPagination(int pageIndex, int totalCount, int pageSize, bool alignedLinks, object htmlAttributes, string onClick, Uri currentUrl)
         {
             var pageCount = CalculatePageCount(pageSize, totalCount);
             if (pageCount == 1)
@@ -171,20 +178,24 @@ namespace FluentMvcGrid
                 liClass += " previous";
             }
             string url;
+            int page;
             if (pageIndex == 1)
             {
                 url = "#";
                 liClass += " disabled";
+                ul.InnerHtml += GetPaginationItem(text, url, liClass.Trim(), null, onClick, null);
             }
             else
             {
-                parameters["page"] = (pageIndex - 1).ToString(CultureInfo.InvariantCulture);
+                page = (pageIndex - 1);
+                parameters["page"] = page.ToString();
                 url = path + "?" + parameters;
+                ul.InnerHtml += GetPaginationItem(text, url, liClass.Trim(), null, onClick, page);
             }
-            ul.InnerHtml += GetPaginationItem(text, url, liClass.Trim(), "");
 
             //Next
-            parameters["page"] = (pageIndex + 1).ToString(CultureInfo.InvariantCulture);
+            page = (pageIndex + 1);
+            parameters["page"] = page.ToString();
             text = FluentMvcGridResources.Next;
             liClass = "";
             if (pageIndex + 1 > pageCount)
@@ -201,7 +212,7 @@ namespace FluentMvcGrid
                 text = text + " &rarr;";
                 liClass += " next";
             }
-            ul.InnerHtml += GetPaginationItem(text, url, liClass, "");
+            ul.InnerHtml += GetPaginationItem(text, url, liClass, null, onClick, page);
 
             return new HtmlString(ul.ToString());
         }
@@ -211,7 +222,7 @@ namespace FluentMvcGrid
             return (int)Math.Ceiling((double)totalCount / pageSize);
         }
 
-        private static string GetPaginationItem(string text, string url, string liClass, string title)
+        private static string GetPaginationItem(string text, string url, string liClass, string title, string onClick, int? page)
         {
             var a = new TagBuilder("a")
             {
@@ -220,6 +231,11 @@ namespace FluentMvcGrid
             if (!string.IsNullOrWhiteSpace(url))
             {
                 a.Attributes.Add("href", url);
+                if (!string.IsNullOrEmpty(onClick) && page != null)
+                {
+                    var javascript = string.Format("javascript:{0}(\"{1}\",{2});return false;", onClick, url, page);
+                    a.Attributes.Add("onclick", javascript);
+                }
             }
             var li = new TagBuilder("li");
             if (!string.IsNullOrWhiteSpace(liClass))
