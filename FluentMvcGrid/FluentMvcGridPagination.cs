@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace FluentMvcGrid
 {
@@ -14,6 +15,8 @@ namespace FluentMvcGrid
         private PaginationAligment _paginationAligment;
         private int _totalCount;
         private string _onPaginate;
+        private string[] _removedParameters;
+        private Dictionary<string, string> _addedParameters;
 
         public FluentMvcGridPagination()
         {
@@ -29,6 +32,18 @@ namespace FluentMvcGrid
         public FluentMvcGridPagination Attributes(object value)
         {
             _attributes = value;
+            return this;
+        }
+
+        public FluentMvcGridPagination RemovedParameters(string[] value)
+        {
+            _removedParameters = value;
+            return this;
+        }
+
+        public FluentMvcGridPagination AddedParameters(Dictionary<string, string> value)
+        {
+            _addedParameters = value;
             return this;
         }
 
@@ -89,7 +104,7 @@ namespace FluentMvcGrid
         internal string Build(Configuration configuration, Uri url)
         {
             return Pagination.GetDefaultPagination(_pageIndex, _totalCount, _pageSize, _paginationSizing, _paginationAligment,
-                    _numericLinksCount, _paginationInfo, _attributes, configuration.GetBootstrapVersion(), _onPaginate, url).ToString();
+                    _numericLinksCount, _paginationInfo, _attributes, configuration.GetBootstrapVersion(), _onPaginate, url, _removedParameters, _addedParameters).ToString();
         }
 
         internal bool GetEnabled()

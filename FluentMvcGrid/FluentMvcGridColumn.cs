@@ -175,7 +175,7 @@ namespace FluentMvcGrid
                 }
                 parameters["sort"] = _sortBy;
                 parameters["sortdir"] = sortDir;
-                var href = url.LocalPath + "?" + parameters;
+                var href = Utilities.AppendParametersToUrl(url.LocalPath, parameters);
                 a.Attributes.Add("href", href);
                 if (!string.IsNullOrEmpty(_onSort))
                 {
