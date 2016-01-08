@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Web;
 using System.Web.Mvc;
@@ -8,14 +9,13 @@ namespace FluentMvcGrid
 {
     internal static class Pagination
     {
-        public static HtmlString GetDefaultPagination(int pageIndex, int totalCount, int pageSize, PaginationSizing paginationSizing, PaginationAligment paginationAligment, int numericLinksCount, bool paginationInfo, object htmlAttributes, BootstrapVersion bootstrapVersion, string onClick)
+        public static HtmlString GetDefaultPagination(int pageIndex, int totalCount, int pageSize, PaginationSizing paginationSizing, PaginationAligment paginationAligment, int numericLinksCount, bool paginationInfo, object htmlAttributes, BootstrapVersion bootstrapVersion, string onClick, Uri currentUrl, string[] removedParameters, Dictionary<string, string> addedParameters)
         {
-            return GetDefaultPagination(pageIndex, totalCount, pageSize, paginationSizing, paginationAligment, numericLinksCount,
-                paginationInfo, htmlAttributes, bootstrapVersion, onClick, HttpContext.Current.Request.Url);
-        }
+            if (currentUrl == null)
+            {
+                currentUrl = HttpContext.Current.Request.Url;
+            }
 
-        public static HtmlString GetDefaultPagination(int pageIndex, int totalCount, int pageSize, PaginationSizing paginationSizing, PaginationAligment paginationAligment, int numericLinksCount, bool paginationInfo, object htmlAttributes, BootstrapVersion bootstrapVersion, string onClick, Uri currentUrl)
-        {
             var pageCount = CalculatePageCount(pageSize, totalCount);
             if (pageCount == 1)
             {
@@ -71,6 +71,9 @@ namespace FluentMvcGrid
 
             var parameters = HttpUtility.ParseQueryString(currentUrl.Query);
 
+            RemoveParameters(parameters, removedParameters);
+            AddParameters(parameters, addedParameters);
+
             if (string.IsNullOrWhiteSpace(parameters["page"]))
             {
                 parameters.Add("page", "");
@@ -80,7 +83,7 @@ namespace FluentMvcGrid
 
             var path = currentUrl.LocalPath;
 
-            var url = path + "?" + parameters;
+            var url = Utilities.AppendParametersToUrl(path, parameters);
             ul.InnerHtml += GetPaginationItem("&laquo;", url, liClass, FluentMvcGridResources.First, onClick, page);
 
             var num = pageCount - 1;
@@ -105,7 +108,7 @@ namespace FluentMvcGrid
                 {
                     page = j;
                     parameters["page"] = page.ToString();
-                    url = path + "?" + parameters;
+                    url = Utilities.AppendParametersToUrl(path, parameters);
                     ul.InnerHtml += GetPaginationItem(text, url, liClass, null, onClick, page);
                 }
                 else
@@ -118,7 +121,7 @@ namespace FluentMvcGrid
             liClass = pageIndex == pageCount ? "disabled" : "";
             page = pageCount;
             parameters["page"] = page.ToString();
-            url = path + "?" + parameters;
+            url = Utilities.AppendParametersToUrl(path, parameters);
             ul.InnerHtml += GetPaginationItem("&raquo;", url, liClass, FluentMvcGridResources.Last, onClick, page);
 
             if (paginationInfo)
@@ -136,13 +139,13 @@ namespace FluentMvcGrid
             return new HtmlString(ul.ToString());
         }
 
-        public static HtmlString GetPagerPagination(int pageIndex, int totalCount, int pageSize, bool alignedLinks, object htmlAttributes, string onClick)
+        public static HtmlString GetPagerPagination(int pageIndex, int totalCount, int pageSize, bool alignedLinks, object htmlAttributes, string onClick, Uri currentUrl, string[] removedParameters, Dictionary<string, string> addedParameters)
         {
-            return GetPagerPagination(pageIndex, totalCount, pageSize, alignedLinks, htmlAttributes, onClick, HttpContext.Current.Request.Url);
-        }
+            if (currentUrl == null)
+            {
+                currentUrl = HttpContext.Current.Request.Url;
+            }
 
-        public static HtmlString GetPagerPagination(int pageIndex, int totalCount, int pageSize, bool alignedLinks, object htmlAttributes, string onClick, Uri currentUrl)
-        {
             var pageCount = CalculatePageCount(pageSize, totalCount);
             if (pageCount == 1)
             {
@@ -150,6 +153,9 @@ namespace FluentMvcGrid
             }
 
             var parameters = HttpUtility.ParseQueryString(currentUrl.Query);
+
+            RemoveParameters(parameters, removedParameters);
+            AddParameters(parameters, addedParameters);
 
             if (string.IsNullOrWhiteSpace(parameters["page"]))
             {
@@ -189,7 +195,7 @@ namespace FluentMvcGrid
             {
                 page = (pageIndex - 1);
                 parameters["page"] = page.ToString();
-                url = path + "?" + parameters;
+                url = Utilities.AppendParametersToUrl(path, parameters);
                 ul.InnerHtml += GetPaginationItem(text, url, liClass.Trim(), null, onClick, page);
             }
 
@@ -205,7 +211,7 @@ namespace FluentMvcGrid
             }
             else
             {
-                url = path + "?" + parameters;
+                url = Utilities.AppendParametersToUrl(path, parameters);
             }
             if (alignedLinks)
             {
@@ -215,6 +221,30 @@ namespace FluentMvcGrid
             ul.InnerHtml += GetPaginationItem(text, url, liClass, null, onClick, page);
 
             return new HtmlString(ul.ToString());
+        }
+
+        private static void RemoveParameters(NameValueCollection collection, string[] parameters)
+        {
+            if (parameters == null)
+            {
+                return;
+            }
+            foreach (var parameter in parameters)
+            {
+                collection.Remove(parameter);
+            }
+        }
+
+        private static void AddParameters(NameValueCollection collection, Dictionary<string, string> parameters)
+        {
+            if (parameters == null)
+            {
+                return;
+            }
+            foreach (var parameter in parameters)
+            {
+                collection.Add(parameter.Key, parameter.Value);
+            }
         }
 
         private static int CalculatePageCount(int pageSize, int totalCount)

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Web;
 using System.Web.Mvc;
 
 namespace FluentMvcGrid
@@ -82,6 +84,35 @@ namespace FluentMvcGrid
                 return value;
             }
             return defaultValue;
+        }
+
+        internal static string AppendParametersToUrl(string url, NameValueCollection parameters)
+        {
+            if (parameters == null || parameters.Count == 0)
+            {
+                return url;
+            }
+            if (url.IndexOf("?") == -1)
+            {
+                url += "?";
+            }
+            //url = url + parameters; // does not work with javascript function decodeURIComponent
+            foreach (var key in parameters.AllKeys)
+            {
+                url += UrlEncode(key) + "=" + UrlEncode(parameters[key]) + "&";
+            }
+            url = url.TrimEnd('&');
+            return url;
+        }
+
+        /// <summary>
+        /// Encode value with compatibility with javascript function decodeURIComponent 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private static string UrlEncode(string value)
+        {
+            return HttpUtility.UrlEncode(value).Replace("+", "%20");
         }
     }
 }

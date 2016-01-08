@@ -234,7 +234,7 @@ namespace FluentMvcGrid
             }
             if (parameters.Keys.Count > 0)
             {
-                return url.LocalPath + "?" + parameters;
+                return Utilities.AppendParametersToUrl(url.LocalPath, parameters);
             }
             return url.LocalPath;
         }
@@ -317,8 +317,8 @@ namespace FluentMvcGrid
                 var numberOfVisibleColumns = GetNumberOfVisibleColumns();
                 if (numberOfColSpan < numberOfVisibleColumns)
                 {
-                    tr.InnerHtml += string.Format("<td colspan='{0}'>{1}</td>", 
-                        numberOfVisibleColumns - numberOfColSpan, 
+                    tr.InnerHtml += string.Format("<td colspan='{0}'>{1}</td>",
+                        numberOfVisibleColumns - numberOfColSpan,
                         Utilities.GetText("", _configuration.GetWhiteSpace()));
                 }
                 tfoot.InnerHtml += tr.ToString();
