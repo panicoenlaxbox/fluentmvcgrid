@@ -112,7 +112,12 @@ namespace FluentMvcGrid
         /// <returns></returns>
         private static string UrlEncode(string value)
         {
-            return HttpUtility.UrlEncode(value).Replace("+", "%20");
+            value = HttpUtility.UrlEncode(value);
+            if (value != null)
+            {
+                value = value.Replace("+", "%20");
+            }
+            return value;
         }
     }
 }
