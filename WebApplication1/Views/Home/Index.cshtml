@@ -34,7 +34,8 @@
       .Pagination(pagination => pagination
           .PageIndex(Model.PageIndex)
           .TotalCount(Model.TotalCount)
-          //.OnPaginate("paginate")
+          .Href(true)
+          .OnPaginate("paginate")
           //.RemovedParameters(new[] { "fake"})
           .AddedParameters(new Dictionary<string, string>()
           {

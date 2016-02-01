@@ -10,7 +10,7 @@ namespace FluentMvcGrid
 {
     internal static class Pagination
     {
-        public static HtmlString GetDefaultPagination(int pageIndex, int totalCount, int pageSize, PaginationSizing paginationSizing, PaginationAligment paginationAligment, int numericLinksCount, bool paginationInfo, object htmlAttributes, BootstrapVersion bootstrapVersion, string onClick, Uri currentUrl, string[] removedParameters, Dictionary<string, string> addedParameters)
+        public static HtmlString GetDefaultPagination(int pageIndex, int totalCount, int pageSize, PaginationSizing paginationSizing, PaginationAligment paginationAligment, int numericLinksCount, bool paginationInfo, object htmlAttributes, BootstrapVersion bootstrapVersion, string onClick, bool href, Uri currentUrl, string[] removedParameters, Dictionary<string, string> addedParameters)
         {
             if (currentUrl == null)
             {
@@ -85,7 +85,7 @@ namespace FluentMvcGrid
             var path = currentUrl.LocalPath;
 
             var url = Utilities.AppendParametersToUrl(path, parameters);
-            ul.InnerHtml += GetPaginationItem("&laquo;", url, liClass, FluentMvcGridResources.First, onClick, page);
+            ul.InnerHtml += GetPaginationItem("&laquo;", url, liClass, FluentMvcGridResources.First, onClick, href, page);
 
             var num = pageCount - 1;
             var num1 = pageIndex + numericLinksCount / 2;
@@ -110,12 +110,12 @@ namespace FluentMvcGrid
                     page = j;
                     parameters["page"] = page.ToString();
                     url = Utilities.AppendParametersToUrl(path, parameters);
-                    ul.InnerHtml += GetPaginationItem(text, url, liClass, null, onClick, page);
+                    ul.InnerHtml += GetPaginationItem(text, url, liClass, null, onClick, href, page);
                 }
                 else
                 {
                     url = "";
-                    ul.InnerHtml += GetPaginationItem(text, url, liClass, null, onClick, null);
+                    ul.InnerHtml += GetPaginationItem(text, url, liClass, null, onClick, href, null);
                 }
             }
 
@@ -123,7 +123,7 @@ namespace FluentMvcGrid
             page = pageCount;
             parameters["page"] = page.ToString();
             url = Utilities.AppendParametersToUrl(path, parameters);
-            ul.InnerHtml += GetPaginationItem("&raquo;", url, liClass, FluentMvcGridResources.Last, onClick, page);
+            ul.InnerHtml += GetPaginationItem("&raquo;", url, liClass, FluentMvcGridResources.Last, onClick, href, page);
 
             if (paginationInfo)
             {
@@ -140,7 +140,7 @@ namespace FluentMvcGrid
             return new HtmlString(ul.ToString());
         }
 
-        public static HtmlString GetPagerPagination(int pageIndex, int totalCount, int pageSize, bool alignedLinks, object htmlAttributes, string onClick, Uri currentUrl, string[] removedParameters, Dictionary<string, string> addedParameters)
+        public static HtmlString GetPagerPagination(int pageIndex, int totalCount, int pageSize, bool alignedLinks, object htmlAttributes, string onClick, bool href, Uri currentUrl, string[] removedParameters, Dictionary<string, string> addedParameters)
         {
             if (currentUrl == null)
             {
@@ -190,14 +190,14 @@ namespace FluentMvcGrid
             {
                 url = "#";
                 liClass += " disabled";
-                ul.InnerHtml += GetPaginationItem(text, url, liClass.Trim(), null, onClick, null);
+                ul.InnerHtml += GetPaginationItem(text, url, liClass.Trim(), null, onClick, href, null);
             }
             else
             {
                 page = (pageIndex - 1);
                 parameters["page"] = page.ToString();
                 url = Utilities.AppendParametersToUrl(path, parameters);
-                ul.InnerHtml += GetPaginationItem(text, url, liClass.Trim(), null, onClick, page);
+                ul.InnerHtml += GetPaginationItem(text, url, liClass.Trim(), null, onClick, href, page);
             }
 
             //Next
@@ -219,7 +219,7 @@ namespace FluentMvcGrid
                 text = text + " &rarr;";
                 liClass += " next";
             }
-            ul.InnerHtml += GetPaginationItem(text, url, liClass, null, onClick, page);
+            ul.InnerHtml += GetPaginationItem(text, url, liClass, null, onClick, href, page);
 
             return new HtmlString(ul.ToString());
         }
@@ -256,7 +256,7 @@ namespace FluentMvcGrid
             return (int)Math.Ceiling((double)totalCount / pageSize);
         }
 
-        private static string GetPaginationItem(string text, string url, string liClass, string title, string onClick, int? page)
+        private static string GetPaginationItem(string text, string url, string liClass, string title, string onClick, bool href, int? page)
         {
             var a = new TagBuilder("a")
             {
@@ -264,10 +264,18 @@ namespace FluentMvcGrid
             };
             if (!string.IsNullOrWhiteSpace(url))
             {
-                a.Attributes.Add("href", url);
+                a.Attributes.Add("href", string.IsNullOrWhiteSpace(onClick) ? url : "#");
                 if (!string.IsNullOrEmpty(onClick) && page != null)
                 {
-                    var javascript = string.Format("javascript:{0}(\"{1}\",{2});return false;", onClick, url, page);
+                    string javascript;
+                    if (href)
+                    {
+                        javascript = string.Format("javascript:{0}(\"{1}\",{2});return false;", onClick, url, page);
+                    }
+                    else
+                    {
+                        javascript = string.Format("javascript:{0}({1});return false;", onClick, page);
+                    }                    
                     a.Attributes.Add("onclick", javascript);
                 }
             }
@@ -275,6 +283,10 @@ namespace FluentMvcGrid
             if (!string.IsNullOrWhiteSpace(liClass))
             {
                 li.AddCssClass(liClass);
+            }
+            if (page != null)
+            {
+                li.Attributes.Add("data-page", page.ToString());
             }
             li.InnerHtml += a.ToString();
             if (!string.IsNullOrWhiteSpace(title))

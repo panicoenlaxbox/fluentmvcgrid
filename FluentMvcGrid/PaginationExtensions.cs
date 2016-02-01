@@ -19,11 +19,12 @@ namespace FluentMvcGrid
             object htmlAttributes,
             BootstrapVersion bootstrapVersion,
             string onClick,
-            Uri currentUrl,
+            bool href,
+            Uri currentUrl,            
             string[] removedParameters,
             Dictionary<string, string> addedParameters)
         {
-            return Pagination.GetDefaultPagination(pageIndex, totalCount, pageSize, paginationSizing, paginationAligment, numericLinksCount, paginationInfo, htmlAttributes, bootstrapVersion, onClick, currentUrl, removedParameters, addedParameters);
+            return Pagination.GetDefaultPagination(pageIndex, totalCount, pageSize, paginationSizing, paginationAligment, numericLinksCount, paginationInfo, htmlAttributes, bootstrapVersion, onClick, href, currentUrl, removedParameters, addedParameters);
         }
 
         public static HtmlString GetPagerPagination(
@@ -34,11 +35,12 @@ namespace FluentMvcGrid
             bool alignedLinks,
             object htmlAttributes,
             string onClick,
+            bool href,
             Uri currentUrl,
             string[] removedParameters,
             Dictionary<string, string> addedParameters)
         {
-            return Pagination.GetPagerPagination(pageIndex, totalCount, pageSize, alignedLinks, htmlAttributes, onClick, currentUrl, removedParameters, addedParameters);
+            return Pagination.GetPagerPagination(pageIndex, totalCount, pageSize, alignedLinks, htmlAttributes, onClick, href, currentUrl, removedParameters, addedParameters);
         }
     }
 }

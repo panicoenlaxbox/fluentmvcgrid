@@ -17,6 +17,7 @@ namespace FluentMvcGrid
         private string _onPaginate;
         private string[] _removedParameters;
         private Dictionary<string, string> _addedParameters;
+        private bool _href;
 
         public FluentMvcGridPagination()
         {
@@ -27,6 +28,7 @@ namespace FluentMvcGrid
             _paginationInfo = true;
             _paginationSizing = PaginationSizing.Normal;
             _paginationAligment = PaginationAligment.Left;
+            _href = true;
         }
 
         public FluentMvcGridPagination Attributes(object value)
@@ -56,6 +58,12 @@ namespace FluentMvcGrid
         public FluentMvcGridPagination Info(bool value)
         {
             _paginationInfo = value;
+            return this;
+        }
+
+        public FluentMvcGridPagination Href(bool value)
+        {
+            _href = value;
             return this;
         }
 
@@ -103,8 +111,7 @@ namespace FluentMvcGrid
 
         internal string Build(Configuration configuration, Uri url)
         {
-            return Pagination.GetDefaultPagination(_pageIndex, _totalCount, _pageSize, _paginationSizing, _paginationAligment,
-                    _numericLinksCount, _paginationInfo, _attributes, configuration.GetBootstrapVersion(), _onPaginate, url, _removedParameters, _addedParameters).ToString();
+            return Pagination.GetDefaultPagination(_pageIndex, _totalCount, _pageSize, _paginationSizing, _paginationAligment, _numericLinksCount, _paginationInfo, _attributes, configuration.GetBootstrapVersion(), _onPaginate, _href, url, _removedParameters, _addedParameters).ToString();
         }
 
         internal bool GetEnabled()
