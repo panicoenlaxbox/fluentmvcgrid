@@ -101,6 +101,10 @@ namespace FluentMvcGrid
             foreach (var key in parameters.AllKeys)
             {
                 var value = parameters[key];
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    continue;
+                }
                 if (value.IndexOf(",") != -1)
                 {
                     foreach (var item in value.Split(new[] { ',' }))
@@ -136,7 +140,7 @@ namespace FluentMvcGrid
         {
             var nameValueCollection = CreateHttpValueCollection();
             var parameters = query.Split('&');
-            foreach (var parameter in parameters.Where(p => p.Length > 0))
+            foreach (var parameter in parameters.Where(p => !string.IsNullOrWhiteSpace(p)))
             {
                 var parts = parameter.Split('=');
                 if (parts.Length > 0)
