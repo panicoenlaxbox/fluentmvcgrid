@@ -227,7 +227,7 @@ namespace FluentMvcGrid
 
         private string GetCurrentUrl(Uri url)
         {
-            var parameters = HttpUtility.ParseQueryString(url.Query);
+            var parameters = Utilities.ParseQueryString(url.Query);
             if (string.IsNullOrWhiteSpace(parameters["page"]) && _items.Any())
             {
                 parameters.Add("page", "1");
