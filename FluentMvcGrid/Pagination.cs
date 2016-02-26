@@ -70,15 +70,11 @@ namespace FluentMvcGrid
 
             var liClass = pageIndex == 1 ? "disabled" : "";
 
-            var parameters = HttpUtility.ParseQueryString(currentUrl.Query);
+
+            var parameters = Utilities.ParseQueryString(currentUrl.Query);
 
             RemoveParameters(parameters, removedParameters);
             AddParameters(parameters, addedParameters);
-
-            if (string.IsNullOrWhiteSpace(parameters["page"]))
-            {
-                parameters.Add("page", "");
-            }
             var page = 1;
             parameters["page"] = page.ToString();
 

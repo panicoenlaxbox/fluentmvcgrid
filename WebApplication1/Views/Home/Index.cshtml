@@ -34,16 +34,16 @@
       .Pagination(pagination => pagination
           .PageIndex(Model.PageIndex)
           .TotalCount(Model.TotalCount)
-          .Href(true)
-          .OnPaginate("paginate")
           //.RemovedParameters(new[] { "fake"})
-          .AddedParameters(new Dictionary<string, string>()
-          {
-              { "debug", "true"},
-              { "stage", "producción evolutiva"}
-          }))
+          //.AddedParameters(new Dictionary<string, string>()
+          //{
+          //    { "debug", "true"},
+          //    { "stage", "producción evolutiva"}
+          //})
+          )
       .Eof(@<p>No hay registros que mostrar</p>)
-      //.Url(new Uri("http://localhost:36513/Home/Index?sergio=león&sergio=panicoenlaxbox&carmen=olivas"))
+                          .Url(new Uri("http://localhost:36513/Home/Index?param1=óvalue11&param1=value12&param2=value2"))
+                              .HeadersIfEof(true))
       .HeadersIfEof(true))
 
 <script>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
@@ -99,7 +100,18 @@ namespace FluentMvcGrid
             //url = url + parameters; // does not work with javascript function decodeURIComponent
             foreach (var key in parameters.AllKeys)
             {
-                url += UrlEncode(key) + "=" + UrlEncode(parameters[key]) + "&";
+                var value = parameters[key];
+                if (value.IndexOf(",") != -1)
+                {
+                    foreach (var item in value.Split(new[] { ',' }))
+                    {
+                        url += UrlEncode(key) + "=" + UrlEncode(item) + "&";
+                    }
+                }
+                else
+                {
+                    url += UrlEncode(key) + "=" + UrlEncode(value) + "&";
+                }
             }
             url = url.TrimEnd('&');
             return url;
@@ -119,5 +131,30 @@ namespace FluentMvcGrid
             }
             return value;
         }
+
+        internal static NameValueCollection ParseQueryString(string query)
+        {
+            var nameValueCollection = CreateHttpValueCollection();
+            var parameters = query.Split('&');
+            foreach (var parameter in parameters.Where(p => p.Length > 0))
+            {
+                var parts = parameter.Split('=');
+                if (parts.Length > 0)
+                {
+                    var name = HttpUtility.UrlDecode(parts[0].Trim('?', ' '));
+                    var value = HttpUtility.UrlDecode(parts[1].Trim());
+                    nameValueCollection.Add(name, value);
+                }
+            }
+            return nameValueCollection;
+        }
+
+        private static NameValueCollection CreateHttpValueCollection()
+        {
+            // HttpValueCollection is a internal class
+            NameValueCollection nameValueCollection = HttpUtility.ParseQueryString("?");
+            return nameValueCollection;
+        }
+
     }
 }
