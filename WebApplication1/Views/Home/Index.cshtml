@@ -42,8 +42,9 @@
           //})
           )
       .Eof(@<p>No hay registros que mostrar</p>)
-                .Url(new Uri("http://localhost:36513/Home/Index?sergio=león&sergio=panicoenlaxbox"))
-                    .HeadersIfEof(true))
+                          .Url(new Uri("http://localhost:36513/Home/Index?param1=óvalue11&param1=value12&param2=value2"))
+                              .HeadersIfEof(true))
+      .HeadersIfEof(true))
 
 <script>
     function sort(url, sortBy, sortDir) {
