@@ -190,14 +190,14 @@ namespace FluentMvcGrid
             }
             else
             {
-                page = (pageIndex - 1);
+                page = pageIndex - 1;
                 parameters["page"] = page.ToString();
                 url = Utilities.AppendParametersToUrl(path, parameters);
                 ul.InnerHtml += GetPaginationItem(text, url, liClass.Trim(), null, onClick, href, page);
             }
 
             //Next
-            page = (pageIndex + 1);
+            page = pageIndex + 1;
             parameters["page"] = page.ToString();
             text = FluentMvcGridResources.Next;
             liClass = "";

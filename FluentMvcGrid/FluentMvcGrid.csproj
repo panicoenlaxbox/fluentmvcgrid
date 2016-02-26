@@ -81,6 +81,8 @@
     <Compile Include="FluentMvcGridPagination.cs" />
     <Compile Include="PaginationAligment.cs" />
     <Compile Include="PaginationExtensions.cs" />
+    <Compile Include="PaginationShortcut.cs" />
+    <Compile Include="PaginationShortcutItem.cs" />
     <Compile Include="PaginationSizing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FluentMvcGridResources.cs" />
