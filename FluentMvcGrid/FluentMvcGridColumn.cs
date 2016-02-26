@@ -125,29 +125,8 @@ namespace FluentMvcGrid
             return td.ToString();
         }
 
-        private static NameValueCollection ParseQueryString(string query)
-        {
-            var nameValueCollection = CreateHttpValueCollection();
-            var parameters = query.Split('&');
-            foreach (var parameter in parameters)
-            {
-                var parts = parameter.Split('=');
-                if (parts.Length > 0)
-                {
-                    var name = HttpUtility.UrlDecode(parts[0].Trim('?', ' '));
-                    var value = HttpUtility.UrlDecode(parts[1].Trim());
-                    nameValueCollection.Add(name, value);
-                }
-            }
-            return nameValueCollection;
-        }
+        
 
-        private static NameValueCollection CreateHttpValueCollection()
-        {
-            // HttpValueCollection is a internal class
-            NameValueCollection nameValueCollection = HttpUtility.ParseQueryString("?");
-            return nameValueCollection;
-        }
 
         internal string BuildHeader(Uri url, Configuration configuration)
         {
@@ -163,7 +142,7 @@ namespace FluentMvcGrid
                 {
                     InnerHtml = _headerText
                 };
-                NameValueCollection parameters = HttpUtility.ParseQueryString(url.Query);
+                NameValueCollection parameters = Utilities.ParseQueryString(url.Query);
 
                 parameters.Remove("page");
                 var sort = parameters["sort"];
