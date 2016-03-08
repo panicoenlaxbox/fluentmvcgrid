@@ -7,33 +7,19 @@ namespace FluentMvcGrid
 {
     public static class PaginationExtensions
     {
-        public static PaginationShortcut GetShortcutPagination(this HtmlHelper htmlHelper, int pageIndex, int totalCount, int pageSize)
+        public static PaginationSummary GetSummaryPagination(this HtmlHelper htmlHelper, int pageIndex, int totalCount, int pageSize)
         {
             var pageCount = (int)Math.Ceiling((double)totalCount / pageSize);
-            var shortcut = new PaginationShortcut
-            {
-                First = new PaginationShortcutItem()
-                {
-                    Enabled = pageIndex > 1,
-                    PageIndex = pageIndex > 1 ? 1 : (int?)null
-                },
-                Previous = new PaginationShortcutItem()
-                {
-                    Enabled = pageIndex > 1,
-                    PageIndex = pageIndex > 1 ? pageIndex - 1 : (int?)null
-                },
-                Next = new PaginationShortcutItem()
-                {
-                    Enabled = pageIndex + 1 <= pageCount,
-                    PageIndex = pageIndex + 1 <= pageCount ? pageIndex + 1 : (int?)null
-                },
-                Last = new PaginationShortcutItem()
-                {
-                    Enabled = pageIndex < pageCount,
-                    PageIndex = pageIndex < pageCount ? pageCount : (int?)null
-                }
-            };
-            return shortcut;
+            var summary = new PaginationSummary(
+                pageCount,
+                pageIndex,
+                totalCount,
+                pageSize,
+                new PaginationSummaryItem(pageIndex > 1, pageIndex > 1 ? 1 : (int?)null),
+                new PaginationSummaryItem(pageIndex > 1, pageIndex > 1 ? pageIndex - 1 : (int?)null),
+                new PaginationSummaryItem(pageIndex + 1 <= pageCount, pageIndex + 1 <= pageCount ? pageIndex + 1 : (int?)null),
+                new PaginationSummaryItem(pageIndex < pageCount, pageIndex < pageCount ? pageCount : (int?)null));
+            return summary;
         }
 
         public static HtmlString GetDefaultPagination(
